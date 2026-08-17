@@ -24,7 +24,7 @@
 
 ## 3. Janela da aplicação e lembretes
 
-**Decisão**: o ícone não terá `default_popup`. `chrome.action.onClicked` abre ou foca `chrome.windows.create({ type: "popup" })`, redimensionável, inicialmente em cerca de 1100 × 760 px e funcional a partir de 360 × 600 px. Alarmes diários ou por dias da semana aceitam múltiplos horários, abrem/reutilizam a mesma janela e direcionam ao preenchimento do dia. Snooze personalizado aceita 1 minuto a 48 horas e adia somente a ocorrência atual; recorrências intermediárias são suprimidas até seu disparo, e a agenda normal retorna na próxima ocorrência futura.
+**Decisão**: o ícone não terá `default_popup`. `chrome.action.onClicked` abre ou foca `chrome.windows.create({ type: "popup" })`, redimensionável, inicialmente em cerca de 1100 × 760 px e funcional a partir de 360 × 600 px. Alarmes diários ou por dias da semana aceitam múltiplos horários, abrem/reutilizam a mesma janela e direcionam ao preenchimento do dia. Snooze personalizado aceita 1 minuto a 48 horas, preserva a data local original e adia somente a ocorrência atual; recorrências intermediárias são suprimidas até seu disparo. Se a data original for preenchida, o snooze é cancelado; depois do disparo, a agenda normal retorna na próxima ocorrência futura.
 
 **Motivo**: o popup da action fecha ao perder foco. Uma janela `popup` é independente e não exige `tabs` para ser criada/focada. O ID persistido é apenas uma dica e sempre será validado antes do reuso.
 
@@ -60,7 +60,7 @@
 
 ## 7. Catálogo de feriados
 
-**Decisão**: empacotar dataset brasileiro versionado no build, com municípios por código IBGE e feriados nacionais, estaduais e municipais. A fonte candidata é o projeto MIT [feriados-brasil](https://github.com/joaopbini/feriados-brasil). O script de preparação de release registra URL/revisão, licença, checksum e data, valida o schema e não baixa código executável para execução. O provider permanece substituível; a extensão instalada não atualiza o catálogo pela rede em runtime.
+**Decisão**: empacotar dataset brasileiro versionado no build, com municípios por código IBGE e feriados nacionais, estaduais e municipais. Cada release cobre uma janela móvel do quinto ano anterior ao corrente até o segundo posterior e declara `minYear`/`maxYear`. A fonte candidata é o projeto MIT [feriados-brasil](https://github.com/joaopbini/feriados-brasil). O script de preparação de release registra URL/revisão, licença, checksum e data, valida o schema e não baixa código executável para execução. O provider permanece substituível; a extensão instalada não atualiza o catálogo pela rede em runtime. Fora da cobertura, registros permanecem legíveis e totais dependentes de feriados são marcados como indisponíveis.
 
 **Motivo**: API comercial exige token, impossível de proteger na extensão sem backend. Dataset local dispensa host permissions, funciona offline e mantém simplicidade. Como a fonte comunitária agrega fontes diversas, procedência e versão aparecerão em Configurações e haverá testes de integridade.
 

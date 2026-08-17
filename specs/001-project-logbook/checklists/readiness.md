@@ -8,7 +8,7 @@
 
 ## Completude dos requisitos
 
-- [ ] CHK001 As regras de criação, edição, arquivamento e eventual reativação de projetos estão documentadas, incluindo o comportamento de nomes duplicados em cada estado? [Completeness, Spec §FR-001–FR-003, Data Model §Project]
+- [ ] CHK001 As regras de criação, edição e arquivamento sem reativação na v1 estão documentadas, incluindo o comportamento de nomes duplicados em cada estado? [Completeness, Spec §FR-001–FR-003, Data Model §Project]
 - [ ] CHK002 Os requisitos definem de forma única a ausência de título e os limites de detalhes obrigatórios, início, fim, duração e normalização? [Completeness, Spec §FR-004–FR-005, §FR-021, §FR-031]
 - [ ] CHK003 Os requisitos de conflito definem detecção, informações apresentadas e resultados possíveis para recarregar, descartar ou reaplicar alterações? [Gap, Spec §Edge Cases, Plan §Summary, UI Contract §Cadastro e edição]
 - [ ] CHK004 As operações sujeitas a concorrência estão enumeradas — tarefa, projeto e cada seção de configurações — ou a proteção está explicitamente limitada a algumas entidades? [Coverage, Spec §FR-007, §FR-041, Data Model §Estados e transições]

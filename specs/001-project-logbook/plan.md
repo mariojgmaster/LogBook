@@ -1,6 +1,6 @@
 # Implementation Plan: Logbook por projeto
 
-**Branch**: `N/A (repositório Git ainda não inicializado)` | **Date**: 2026-08-17 | **Spec**: [spec.md](./spec.md)
+**Branch**: `master` | **Date**: 2026-08-17 | **Spec**: [spec.md](./spec.md)
 
 **Input**: Feature specification from `/specs/001-project-logbook/spec.md`
 
@@ -8,7 +8,7 @@
 
 Construir uma extensão Chrome Manifest V3, local-first, para registrar tarefas por projeto, consultar o diário por dia, quinzena ou mês e calcular horas normais, extras de 50% e extras de 100%. Toda a interface será uma janela de navegador do tipo `popup`, aberta ou reutilizada pelo ícone da extensão e pelos lembretes, com React, TypeScript e Ant Design em tema escuro por padrão.
 
-Os lembretes poderão ser diários ou associados a dias da semana, com um ou mais horários locais e snooze personalizado de 1 minuto a 48 horas. Enquanto houver snooze pendente, recorrências intermediárias serão suprimidas; depois do disparo adiado, a agenda normal será retomada na próxima ocorrência futura. O catálogo de feriados será estático, versionado e empacotado, sem rede em runtime.
+Os lembretes poderão ser diários ou associados a dias da semana, com um ou mais horários locais e snooze personalizado de 1 minuto a 48 horas. Enquanto houver snooze pendente, recorrências intermediárias serão suprimidas; o snooze preservará a data original e será cancelado quando essa data for preenchida. Depois do disparo adiado, a agenda normal será retomada na próxima ocorrência futura. O catálogo de feriados será estático, versionado, cobrirá uma janela móvel de oito anos e será empacotado sem rede em runtime.
 
 A aplicação será um único projeto modular, sem backend: a interface chama casos de uso; casos de uso aplicam regras do domínio; repositórios isolam IndexedDB e `chrome.storage.local`; e o service worker apenas coordena eventos Chrome, alarmes, mensagens e a janela. Registros e configurações usam revisão otimista para detectar edições concorrentes antes de sobrescrever dados.
 

@@ -26,7 +26,7 @@ type Response<T> =
 
 Updates/deletes carregam `expectedRevision`. Comandos são idempotentes por `requestId` durante a execução corrente; duplicidade persistente é evitada pelos IDs gerados antes do envio.
 
-`reminder.snooze` recebe o ID da ocorrência e `durationMinutes` inteiro entre 1 e 2.880. Valor inválido retorna `VALIDATION` e preserva a ocorrência vigente; o comando não altera a programação recorrente. Enquanto o snooze estiver pendente, `reminder.reconcile` não cria ocorrências recorrentes intermediárias. Depois do disparo adiado, remove o snooze e agenda somente a próxima recorrência futura.
+`reminder.snooze` recebe o ID da ocorrência, `targetLocalDate` original e `durationMinutes` inteiro entre 1 e 2.880. Valor inválido retorna `VALIDATION` e preserva a ocorrência vigente; o comando não altera a programação recorrente. Enquanto o snooze estiver pendente, `reminder.reconcile` não cria ocorrências recorrentes intermediárias. Se `targetLocalDate` for preenchida, cancela o snooze; registros em outras datas não o cancelam. Depois do disparo adiado, remove o snooze e agenda somente a próxima recorrência futura.
 
 ## Consultas
 

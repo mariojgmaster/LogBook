@@ -42,8 +42,10 @@ Para inspeção manual, abrir `chrome://extensions`, ativar “Modo do desenvolv
 - Negar `alarms` e confirmar que o logbook continua funcional; conceder e verificar lembretes diários e por dias da semana com múltiplos horários.
 - Adiar uma ocorrência por snooze entre 1 minuto e 48 horas e rejeitar valores fora do intervalo sem alterar a recorrência.
 - Manter um snooze além do próximo horário recorrente, confirmar a supressão das ocorrências intermediárias e a retomada somente na recorrência futura após o disparo adiado.
+- Atravessar a meia-noite com snooze, abrir a data original e cancelar somente quando essa data for preenchida.
 - Disparar lembrete e confirmar abertura ou foco da janela popup no formulário do dia.
 - Escolher UF/município sem geolocalização e confirmar aplicação dos feriados do catálogo.
+- Confirmar/cancelar troca de região e validar cobertura contínua de `ano atual - 5` até `ano atual + 2`, incluindo estado indisponível fora dela.
 - Validar 10.000 registros dentro da meta de 2 segundos.
 - Navegar apenas por teclado nas resoluções 360×600, 640×700, 960×720 e 1440×900; verificar foco, contraste, anúncios de erro e ausência de rolagem horizontal.
 

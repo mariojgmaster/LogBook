@@ -52,13 +52,13 @@ Entrada aceita `endMinute` ou `durationMinutes`. Se ambos forem enviados, devem 
 | `frequency` | `daily \| selectedWeekdays` | Recorrência admitida |
 | `weekdays` | array de 1–7 | Vazio no diário; um ou mais dias no personalizado |
 | `timeMinutes` | array de inteiros 0–1439 | Um ou mais horários únicos, ordenados |
-| `snoozedOccurrence` | objeto opcional | ID da ocorrência, duração de 1–2.880 min e instante do novo disparo |
+| `snoozedOccurrence` | objeto opcional | `occurrenceId`, `targetLocalDate`, `originalScheduledAt`, duração de 1–2.880 min e `fireAt` |
 
-O próximo disparo recorrente é recalculado no fuso atual em cada reconciliação. Ao mudar de fuso, os horários civis configurados permanecem. O snooze usa duração decorrida, adia apenas a ocorrência atual e não modifica dias ou horários recorrentes; valores fora de 1–2.880 minutos são rejeitados. Enquanto `snoozedOccurrence` existir, horários recorrentes anteriores ao seu `fireAt` não geram ocorrências. Depois do disparo adiado, o campo é removido e somente a próxima recorrência futura é calculada.
+O próximo disparo recorrente é recalculado no fuso atual em cada reconciliação. Ao mudar de fuso, os horários civis configurados permanecem. O snooze usa duração decorrida, preserva `targetLocalDate`, adia apenas a ocorrência atual e não modifica dias ou horários recorrentes; valores fora de 1–2.880 minutos são rejeitados. Enquanto `snoozedOccurrence` existir, horários recorrentes anteriores ao seu `fireAt` não geram ocorrências. Se `targetLocalDate` for preenchida, o snooze é removido; tarefas em outras datas não o removem. Depois do disparo adiado, o campo é removido e somente a próxima recorrência futura é calculada.
 
 ## HolidayCatalog e HolidayEntry
 
-`HolidayCatalog` contém `version`, `source`, `sourceRevision`, `checksum`, `generatedAt`, catálogo de municípios e cobertura de anos. Cada `HolidayEntry` contém `date`, `name`, `scope` (`national`, `state`, `municipal`), `stateCode` opcional e `municipalityIbgeCode` opcional.
+`HolidayCatalog` contém `version`, `source`, `sourceRevision`, `checksum`, `generatedAt`, `minYear`, `maxYear`, catálogo de municípios e cobertura contínua do quinto ano anterior ao corrente até o segundo posterior. Cada `HolidayEntry` contém `date`, `name`, `scope` (`national`, `state`, `municipal`), `stateCode` opcional e `municipalityIbgeCode` opcional. Fora da cobertura, `HourSummary` retorna estado de calendário indisponível em vez de assumir dia útil.
 
 Entradas duplicadas na mesma data não duplicam minutos: basta uma ocorrência para classificar todo o domingo/feriado como 100%.
 
@@ -76,7 +76,7 @@ Contém `normalMinutes`, `overtime50Minutes`, `overtime100Minutes`, `totalMinute
 
 ## Estados e transições
 
-- Projeto: `active -> archived -> active`; arquivamento não altera registros.
+- Projeto: `active -> archived`; arquivamento não altera registros e reativação não pertence à v1.
 - Registro: criar (`revision=1`), atualizar com revisão esperada, excluir com revisão esperada.
 - Conflito: `clean -> stale -> reloaded` ou `stale -> reapplied`; nunca sobrescrever silenciosamente.
 - Lembrete: `disabled -> permission-pending -> enabled -> snoozed -> enabled`; em `snoozed`, recorrências intermediárias são suprimidas. Negação/revogação leva a `disabled` com motivo exibido.

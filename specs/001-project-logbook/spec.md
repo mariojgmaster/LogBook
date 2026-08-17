@@ -1,6 +1,6 @@
 # Feature Specification: Logbook por Projeto
 
-**Feature Branch**: `N/A (Git repository not initialized)`
+**Feature Branch**: `master`
 
 **Created**: 2026-08-17
 
@@ -47,6 +47,10 @@
 - Q: O que acontece se uma recorrência vencer enquanto há snooze pendente? → A: Ocorrências recorrentes
   intermediárias são suprimidas até o snooze disparar; depois, a recorrência normal é retomada na próxima
   ocorrência futura.
+- Q: Qual data um snooze que atravessa dias deve representar? → A: A data local original da ocorrência; o
+  snooze é cancelado se essa data for preenchida antes do disparo e não é cancelado por registros em outras datas.
+- Q: Qual cobertura temporal o dataset de feriados deve oferecer? → A: Do quinto ano anterior ao ano corrente
+  até o segundo ano posterior, com cobertura e indisponibilidade fora do intervalo exibidas ao usuário.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -145,6 +149,12 @@ depois, verificar a classificação de trabalho em um feriado e simular o horár
 12. **Given** um snooze pendente, **When** um horário recorrente vence antes do disparo adiado, **Then** essa
     ocorrência intermediária é suprimida; quando o snooze dispara, a recorrência é retomada somente na próxima
     ocorrência futura.
+13. **Given** um snooze que atravessa a meia-noite, **When** ele dispara, **Then** a janela abre o registro da
+    data local originalmente lembrada; se essa data já tiver sido preenchida, o snooze é cancelado, enquanto
+    registros em outras datas não o cancelam.
+14. **Given** uma região ativa e uma nova região cujo catálogo foi validado, **When** o usuário tenta aplicá-la,
+    **Then** o sistema informa que todo o histórico será recalculado e só ativa a nova região após confirmação;
+    cancelar preserva região, catálogo e totais atuais.
 
 ---
 
@@ -193,6 +203,10 @@ remanescente conserva datas e associações e que o projeto arquivado não apare
   voltar; apenas a próxima ocorrência válida permanece programada.
 - Se um snooze ultrapassar um ou mais horários recorrentes, esses horários intermediários são suprimidos e não
   geram fila; após o snooze disparar, somente a próxima ocorrência recorrente futura permanece programada.
+- Um snooze preserva a data local da ocorrência original. Se essa data receber uma tarefa válida antes do novo
+  disparo, o snooze é cancelado; tarefas em outras datas não alteram a ocorrência adiada.
+- Datas fora da cobertura do catálogo de feriados mantêm seus registros legíveis, mas totais dependentes de
+  feriados devem indicar calendário indisponível em vez de assumir silenciosamente que são dias úteis.
 - Um dia que seja simultaneamente domingo e feriado deve ter seu tempo contado uma única vez como extra de 100%.
 - Ao trocar estado ou município, o usuário deve confirmar a aplicação da nova região a todo o histórico; após a
   confirmação, os totais derivados são recalculados sem alterar tarefas ou durações originais.
@@ -235,13 +249,16 @@ remanescente conserva datas e associações e que o projeto arquivado não apare
   personalizada entre 1 minuto e 48 horas; esses limites não são exibidos previamente, mas valores fora do
   intervalo MUST ser rejeitados com mensagem de validação sem alterar o lembrete vigente. Enquanto houver um
   snooze pendente, ocorrências recorrentes intermediárias MUST ser suprimidas; depois de seu disparo, a
-  recorrência MUST ser retomada na próxima ocorrência futura.
+  recorrência MUST ser retomada na próxima ocorrência futura. O snooze MUST preservar a data local da ocorrência
+  original e MUST ser cancelado se essa data for preenchida antes do disparo; tarefas em outras datas MUST NOT
+  cancelá-lo.
 - **FR-015**: O sistema MUST exibir o próximo lembrete efetivamente previsto após salvar uma configuração válida
   ou aplicar snooze; enquanto houver snooze pendente, ele MUST ser exibido como a próxima ocorrência.
 - **FR-016**: O sistema MUST abrir no máximo uma janela popup por ocorrência programada e suprimir o lembrete
   quando já existir ao menos uma tarefa registrada para o dia.
 - **FR-017**: A janela popup de lembrete MUST abrir diretamente o fluxo de registro do dia correspondente. Se
   ela já estiver aberta, o sistema MUST reutilizá-la e trazê-la para primeiro plano em vez de criar duplicata.
+  Para snooze, o dia correspondente MUST ser a data local da ocorrência original.
 - **FR-018**: O sistema MUST validar dados novamente quando forem lidos e MUST preservar dados válidos quando
   encontrar conteúdo ausente, incompatível ou malformado.
 - **FR-019**: Toda operação de criação, alteração, exclusão, consulta ou agendamento MUST apresentar um resultado
@@ -302,10 +319,16 @@ remanescente conserva datas e associações e que o projeto arquivado não apare
   da semana, lista de horários locais, estado do acesso opcional e próxima ocorrência prevista.
 - **FR-040**: O catálogo nacional, estadual e municipal MUST ser distribuído como dataset estático, versionado e
   não executável dentro da extensão, atualizado somente por nova versão publicada. A seleção de região e o uso
-  de feriados MUST NOT solicitar acesso de rede em runtime.
+  de feriados MUST NOT solicitar acesso de rede em runtime. Cada versão MUST cobrir do quinto ano anterior ao
+  ano corrente até o segundo ano posterior, declarar `minYear` e `maxYear` e mostrar a cobertura ao usuário.
+  Datas fora da cobertura MUST preservar os registros e sinalizar totais dependentes de feriados como
+  indisponíveis, sem classificá-las silenciosamente como dias úteis.
 - **FR-041**: Configurações MUST apresentar suas três seções em uma página rolável, salvar cada seção
   independentemente, indicar alterações ainda não salvas e exibir validação, carregamento, sucesso e falha junto
   ao controle correspondente. Sair de uma seção com alterações MUST exigir descarte ou retorno à edição.
+- **FR-042**: O Diário MUST permitir filtrar por um ou mais projetos, incluindo projetos arquivados quando
+  selecionados explicitamente, e buscar texto sem diferenciar maiúsculas/minúsculas nos detalhes. Filtro e busca
+  MUST ser combinados por interseção, persistir ao alternar Dia, Quinzena e Mês e ser removidos por ação explícita.
 
 ### Quality and Security Requirements *(mandatory)*
 
