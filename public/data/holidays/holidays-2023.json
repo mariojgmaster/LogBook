@@ -1,0 +1,320 @@
+{
+  "year": 2023,
+  "entries": [
+    {
+      "date": "2023-01-01",
+      "name": "Ano Novo",
+      "scope": "national"
+    },
+    {
+      "date": "2023-01-04",
+      "name": "Criação do estado",
+      "scope": "state",
+      "uf": "RO"
+    },
+    {
+      "date": "2023-01-12",
+      "name": "Dia do evangélico",
+      "scope": "state",
+      "uf": "AC"
+    },
+    {
+      "date": "2023-02-21",
+      "name": "Carnaval",
+      "scope": "state",
+      "uf": "RJ"
+    },
+    {
+      "date": "2023-03-05",
+      "name": "Revolução Pernambucana de 1817",
+      "scope": "state",
+      "uf": "PE"
+    },
+    {
+      "date": "2023-03-08",
+      "name": "Alusivo ao Dia Internacional da Mulher",
+      "scope": "state",
+      "uf": "AC"
+    },
+    {
+      "date": "2023-03-18",
+      "name": "Autonomia do Estado",
+      "scope": "state",
+      "uf": "TO"
+    },
+    {
+      "date": "2023-03-19",
+      "name": "Dia de São José",
+      "scope": "state",
+      "uf": "AP"
+    },
+    {
+      "date": "2023-03-25",
+      "name": "Data magna do estado",
+      "scope": "state",
+      "uf": "CE"
+    },
+    {
+      "date": "2023-04-07",
+      "name": "Sexta-Feira Santa",
+      "scope": "national"
+    },
+    {
+      "date": "2023-04-17",
+      "name": "Dia de Nossa Senhora da Penha",
+      "scope": "state",
+      "uf": "ES"
+    },
+    {
+      "date": "2023-04-21",
+      "name": "Dia de Tiradentes",
+      "scope": "national"
+    },
+    {
+      "date": "2023-04-21",
+      "name": "Fundação de Brasília",
+      "scope": "state",
+      "uf": "DF"
+    },
+    {
+      "date": "2023-04-21",
+      "name": "Data magna do estado",
+      "scope": "state",
+      "uf": "MG"
+    },
+    {
+      "date": "2023-04-23",
+      "name": "Dia de São Jorge",
+      "scope": "state",
+      "uf": "RJ"
+    },
+    {
+      "date": "2023-05-01",
+      "name": "Dia do trabalhador",
+      "scope": "national"
+    },
+    {
+      "date": "2023-06-15",
+      "name": "Aniversário do estado",
+      "scope": "state",
+      "uf": "AC"
+    },
+    {
+      "date": "2023-06-18",
+      "name": "Dia do evangélico",
+      "scope": "state",
+      "uf": "RO"
+    },
+    {
+      "date": "2023-06-24",
+      "name": "São João",
+      "scope": "state",
+      "uf": "AL"
+    },
+    {
+      "date": "2023-06-29",
+      "name": "São Pedro",
+      "scope": "state",
+      "uf": "AL"
+    },
+    {
+      "date": "2023-07-02",
+      "name": "Independência da Bahia",
+      "scope": "state",
+      "uf": "BA"
+    },
+    {
+      "date": "2023-07-08",
+      "name": "Emancipação política de Sergipe",
+      "scope": "state",
+      "uf": "SE"
+    },
+    {
+      "date": "2023-07-09",
+      "name": "Revolução Constitucionalista",
+      "scope": "state",
+      "uf": "SP"
+    },
+    {
+      "date": "2023-07-26",
+      "name": "Fundação da Cidade de Goiás",
+      "scope": "state",
+      "uf": "GO"
+    },
+    {
+      "date": "2023-07-26",
+      "name": "Homenagem à memória do ex-presidente João Pessoa",
+      "scope": "state",
+      "uf": "PB"
+    },
+    {
+      "date": "2023-07-28",
+      "name": "Adesão do Maranhão à independência do Brasil",
+      "scope": "state",
+      "uf": "MA"
+    },
+    {
+      "date": "2023-08-05",
+      "name": "Nossa Senhora das Neves",
+      "scope": "state",
+      "uf": "PB"
+    },
+    {
+      "date": "2023-08-13",
+      "name": "Dia de Santa Catarina",
+      "scope": "state",
+      "uf": "SC"
+    },
+    {
+      "date": "2023-08-15",
+      "name": "Adesão do Grão-Pará à independência do Brasil",
+      "scope": "state",
+      "uf": "PA"
+    },
+    {
+      "date": "2023-09-05",
+      "name": "Dia da Amazônia",
+      "scope": "state",
+      "uf": "AC"
+    },
+    {
+      "date": "2023-09-05",
+      "name": "Elevação do Amazonas à categoria de província",
+      "scope": "state",
+      "uf": "AM"
+    },
+    {
+      "date": "2023-09-07",
+      "name": "Dia da Independência",
+      "scope": "national"
+    },
+    {
+      "date": "2023-09-08",
+      "name": "Nossa Senhora da Natividade",
+      "scope": "state",
+      "uf": "TO"
+    },
+    {
+      "date": "2023-09-13",
+      "name": "Criação do Território Federal",
+      "scope": "state",
+      "uf": "AP"
+    },
+    {
+      "date": "2023-09-16",
+      "name": "Emancipação política",
+      "scope": "state",
+      "uf": "AL"
+    },
+    {
+      "date": "2023-09-20",
+      "name": "Proclamação da República Rio-Grandense",
+      "scope": "state",
+      "uf": "RS"
+    },
+    {
+      "date": "2023-10-03",
+      "name": "Mártires de Cunhaú e Uruaçu",
+      "scope": "state",
+      "uf": "RN"
+    },
+    {
+      "date": "2023-10-05",
+      "name": "Criação do estado",
+      "scope": "state",
+      "uf": "RR"
+    },
+    {
+      "date": "2023-10-05",
+      "name": "Criação do estado",
+      "scope": "state",
+      "uf": "TO"
+    },
+    {
+      "date": "2023-10-11",
+      "name": "Criação do estado",
+      "scope": "state",
+      "uf": "MS"
+    },
+    {
+      "date": "2023-10-12",
+      "name": "Nossa Senhora Aparecida",
+      "scope": "national"
+    },
+    {
+      "date": "2023-10-19",
+      "name": "Dia do Piauí",
+      "scope": "state",
+      "uf": "PI"
+    },
+    {
+      "date": "2023-10-24",
+      "name": "Lançamento da pedra fundamental de Goiânia",
+      "scope": "state",
+      "uf": "GO"
+    },
+    {
+      "date": "2023-11-02",
+      "name": "Dia de Finados",
+      "scope": "national"
+    },
+    {
+      "date": "2023-11-15",
+      "name": "Proclamação da República",
+      "scope": "national"
+    },
+    {
+      "date": "2023-11-20",
+      "name": "Morte de Zumbi dos Palmares",
+      "scope": "state",
+      "uf": "AL"
+    },
+    {
+      "date": "2023-11-20",
+      "name": "Dia da Consciência Negra",
+      "scope": "state",
+      "uf": "AM"
+    },
+    {
+      "date": "2023-11-20",
+      "name": "Dia da Consciência Negra",
+      "scope": "state",
+      "uf": "MT"
+    },
+    {
+      "date": "2023-11-20",
+      "name": "Dia da Consciência Negra",
+      "scope": "state",
+      "uf": "RJ"
+    },
+    {
+      "date": "2023-11-20",
+      "name": "Dia da Consciência Negra",
+      "scope": "state",
+      "uf": "SP"
+    },
+    {
+      "date": "2023-11-26",
+      "name": "Dia de Santa Catarina de Alexandria",
+      "scope": "state",
+      "uf": "SC"
+    },
+    {
+      "date": "2023-11-30",
+      "name": "Dia do Evangélico",
+      "scope": "state",
+      "uf": "DF"
+    },
+    {
+      "date": "2023-12-19",
+      "name": "Emancipação política do estado do Paraná",
+      "scope": "state",
+      "uf": "PR"
+    },
+    {
+      "date": "2023-12-25",
+      "name": "Natal",
+      "scope": "national"
+    }
+  ]
+}

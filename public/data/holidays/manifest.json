@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "revision": "2026.1-date-holidays-3.35.0",
+  "generatedAt": "2026-08-17T16:43:04.706Z",
+  "minYear": 2021,
+  "maxYear": 2028,
+  "states": [
+    {
+      "code": "AC",
+      "name": "Acre"
+    },
+    {
+      "code": "AL",
+      "name": "Alagoas"
+    },
+    {
+      "code": "AM",
+      "name": "Amazonas"
+    },
+    {
+      "code": "AP",
+      "name": "Amapá"
+    },
+    {
+      "code": "BA",
+      "name": "Bahia"
+    },
+    {
+      "code": "CE",
+      "name": "Ceará"
+    },
+    {
+      "code": "DF",
+      "name": "Distrito Federal"
+    },
+    {
+      "code": "ES",
+      "name": "Espírito Santo"
+    },
+    {
+      "code": "GO",
+      "name": "Goiás"
+    },
+    {
+      "code": "MA",
+      "name": "Maranhão"
+    },
+    {
+      "code": "MG",
+      "name": "Minas Gerais"
+    },
+    {
+      "code": "MS",
+      "name": "Mato Grosso do Sul"
+    },
+    {
+      "code": "MT",
+      "name": "Mato Grosso"
+    },
+    {
+      "code": "PA",
+      "name": "Pará"
+    },
+    {
+      "code": "PB",
+      "name": "Paraíba"
+    },
+    {
+      "code": "PE",
+      "name": "Pernambuco"
+    },
+    {
+      "code": "PI",
+      "name": "Piauí"
+    },
+    {
+      "code": "PR",
+      "name": "Paraná"
+    },
+    {
+      "code": "RJ",
+      "name": "Rio de Janeiro"
+    },
+    {
+      "code": "RN",
+      "name": "Rio Grande do Norte"
+    },
+    {
+      "code": "RO",
+      "name": "Rondônia"
+    },
+    {
+      "code": "RR",
+      "name": "Roraima"
+    },
+    {
+      "code": "RS",
+      "name": "Rio Grande do Sul"
+    },
+    {
+      "code": "SC",
+      "name": "Santa Catarina"
+    },
+    {
+      "code": "SE",
+      "name": "Sergipe"
+    },
+    {
+      "code": "SP",
+      "name": "São Paulo"
+    },
+    {
+      "code": "TO",
+      "name": "Tocantins"
+    }
+  ],
+  "files": {
+    "holidays-2021.json": "a32f79d4bfb65c5968b4c4163102b21ed2ff9dfe54b4a608a7898a7ac374090d",
+    "holidays-2022.json": "bb2ac7ff68263e402d36bdc60dfcda1d2f4514ef23ee4830ed37f0958ac7f3df",
+    "holidays-2023.json": "cc9addb4e6873a1fc6378f5e0f0a71e736e7781608fa37aac1f12b6fec1a6092",
+    "holidays-2024.json": "774e1699abaa2f28f484587bd134f990124557b65c4d09faa71d2e5d530d2334",
+    "holidays-2025.json": "12c1b96674b0d503c549d009034bdb168c3f337d296cd5feb15536004a4385e8",
+    "holidays-2026.json": "7acd006a592e08ba129fb750ecb3e487b74574ab0b0a06519ed9ddf08265c4e4",
+    "holidays-2027.json": "00ea571395627faee8795fe02bbd5a8ad10ce0fca6561ee42870c3d42e33301f",
+    "holidays-2028.json": "bdc413fbba14aee4cf55a2b6c08ba6f38cb094803e514148c263230bb45757b7",
+    "municipalities.json": "be681b6aead3115d8aeaa705a7049d07ef31d7db70b9ed186fe270f26ecfaf3f"
+  },
+  "sources": [
+    {
+      "name": "date-holidays",
+      "license": "MIT",
+      "url": "https://github.com/commenthol/date-holidays"
+    },
+    {
+      "name": "IBGE Localidades",
+      "license": "dados públicos",
+      "url": "https://servicodados.ibge.gov.br/api/docs/localidades"
+    }
+  ]
+}
