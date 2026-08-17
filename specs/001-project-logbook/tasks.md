@@ -17,14 +17,14 @@
 
 **Purpose**: Inicializar a extensão React/TypeScript e as ferramentas de qualidade.
 
-- [ ] T001 Inicializar scripts e dependências fixadas de React 19.2, Ant Design 6.6, Vite 8, Zod 4, idb, Day.js, Vitest, Testing Library, fake-indexeddb e Playwright em package.json
-- [ ] T002 [P] Configurar TypeScript strict, aliases e targets Chrome 120+ em tsconfig.json e tsconfig.app.json
-- [ ] T003 [P] Configurar build multi-entry da SPA e do service worker sem código remoto em vite.config.ts
-- [ ] T004 [P] Configurar lint, formatação e regras de fronteira entre camadas em eslint.config.js e .prettierrc.json
-- [ ] T005 [P] Configurar ambientes unitário, DOM e cobertura em vitest.config.ts
-- [ ] T006 [P] Configurar execução E2E da extensão empacotada no Chromium em playwright.config.ts
-- [ ] T007 [P] Criar Manifest V3 com `storage`, `optional_permissions: ["alarms"]`, CSP restrita, action sem `default_popup` e service worker module em manifest.json
-- [ ] T008 Criar entradas mínimas da aplicação em index.html, src/ui/main.tsx e src/background/service-worker.ts
+- [x] T001 Inicializar scripts e dependências fixadas de React 19.2, Ant Design 6.6, Vite 8, Zod 4, idb, Day.js, Vitest, Testing Library, fake-indexeddb e Playwright em package.json
+- [x] T002 [P] Configurar TypeScript strict, aliases e targets Chrome 120+ em tsconfig.json e tsconfig.app.json
+- [x] T003 [P] Configurar build multi-entry da SPA e do service worker sem código remoto em vite.config.ts
+- [x] T004 [P] Configurar lint, formatação e regras de fronteira entre camadas em eslint.config.js e .prettierrc.json
+- [x] T005 [P] Configurar ambientes unitário, DOM e cobertura em vitest.config.ts
+- [x] T006 [P] Configurar execução E2E da extensão empacotada no Chromium em playwright.config.ts
+- [x] T007 [P] Criar Manifest V3 com `storage`, `optional_permissions: ["alarms"]`, CSP restrita, action sem `default_popup` e service worker module em manifest.json
+- [x] T008 Criar entradas mínimas da aplicação em index.html, src/ui/main.tsx e src/background/service-worker.ts
 
 ---
 
@@ -36,24 +36,24 @@
 
 ### Foundational tests
 
-- [ ] T009 [P] Criar setup de testes, relógio determinístico, UUIDs, mocks Chrome e IndexedDB isolado em tests/setup/unit.ts, tests/fixtures/clock.ts e tests/fixtures/chrome.ts
-- [ ] T010 [P] Escrever testes de limites, normalização e data/hora civil independente de fuso em tests/unit/domain/time-values.test.ts
-- [ ] T011 [P] Escrever testes contratuais para envelopes, allowlist, payload malformado e erro seguro de mensagens em tests/contract/messages.test.ts
-- [ ] T012 [P] Escrever testes de criação/migração do schema, validação de leitura e preservação após falha em tests/integration/persistence/migrations.test.ts
+- [x] T009 [P] Criar setup de testes, relógio determinístico, UUIDs, mocks Chrome e IndexedDB isolado em tests/setup/unit.ts, tests/fixtures/clock.ts e tests/fixtures/chrome.ts
+- [x] T010 [P] Escrever testes de limites, normalização e data/hora civil independente de fuso em tests/unit/domain/time-values.test.ts
+- [x] T011 [P] Escrever testes contratuais para envelopes, allowlist, payload malformado e erro seguro de mensagens em tests/contract/messages.test.ts
+- [x] T012 [P] Escrever testes de criação/migração do schema, validação de leitura e preservação após falha em tests/integration/persistence/migrations.test.ts
 
 ### Foundational implementation
 
-- [ ] T013 [P] Implementar `AppError`, códigos seguros e tipo `Result` sem dados pessoais em src/domain/errors/app-error.ts e src/application/result.ts
-- [ ] T014 Implementar value objects de data civil, minuto do dia e duração validados em src/domain/value-objects/local-date.ts e src/domain/value-objects/time-range.ts
-- [ ] T015 [P] Definir portas substituíveis para projetos, registros, configurações, feriados, relógio e alarmes em src/application/ports/repositories.ts e src/application/ports/platform.ts
-- [ ] T016 Implementar banco IndexedDB v1, stores, índices, transações e migrações idempotentes em src/infrastructure/persistence/indexeddb/database.ts e src/infrastructure/persistence/indexeddb/migrations.ts
-- [ ] T017 [P] Implementar adaptador versionado de `chrome.storage.local` com defaults, validação de leitura e erros de quota em src/infrastructure/persistence/chrome-storage/settings-store.ts
-- [ ] T018 Implementar schemas Zod e união discriminada de requests, responses e eventos em src/shared/contracts/messages.ts
-- [ ] T019 Implementar dispatcher com validação de remetente, allowlist e envelope de falha em src/background/messages.ts e src/infrastructure/chrome/message-client.ts
-- [ ] T020 Implementar composition root com injeção explícita de repositórios, relógio e plataforma em src/application/composition-root.ts
-- [ ] T021 Implementar criação, validação, foco e persistência reconstruível da janela popup em src/background/popup-window.ts
-- [ ] T022 Registrar listeners síncronos de `runtime`, `action`, `windows` e mensagens no escopo superior, sem estado essencial em memória, em src/background/service-worker.ts
-- [ ] T023 Implementar shell Ant Design em pt-BR, tema escuro padrão, navegação Diário/Projetos/Configurações, error boundary e feedback `aria-live` em src/ui/app/App.tsx, src/ui/theme/theme.ts e src/ui/components/AsyncState.tsx
+- [x] T013 [P] Implementar `AppError`, códigos seguros e tipo `Result` sem dados pessoais em src/domain/errors/app-error.ts e src/application/result.ts
+- [x] T014 Implementar value objects de data civil, minuto do dia e duração validados em src/domain/value-objects/local-date.ts e src/domain/value-objects/time-range.ts
+- [x] T015 [P] Definir portas substituíveis para projetos, registros, configurações, feriados, relógio e alarmes em src/application/ports/repositories.ts e src/application/ports/platform.ts
+- [x] T016 Implementar banco IndexedDB v1, stores, índices, transações e migrações idempotentes em src/infrastructure/persistence/indexeddb/database.ts e src/infrastructure/persistence/indexeddb/migrations.ts
+- [x] T017 [P] Implementar adaptador versionado de `chrome.storage.local` com defaults, validação de leitura e erros de quota em src/infrastructure/persistence/chrome-storage/settings-store.ts
+- [x] T018 Implementar schemas Zod e união discriminada de requests, responses e eventos em src/shared/contracts/messages.ts
+- [x] T019 Implementar dispatcher com validação de remetente, allowlist e envelope de falha em src/background/messages.ts e src/infrastructure/chrome/message-client.ts
+- [x] T020 Implementar composition root com injeção explícita de repositórios, relógio e plataforma em src/application/composition-root.ts
+- [x] T021 Implementar criação, validação, foco e persistência reconstruível da janela popup em src/background/popup-window.ts
+- [x] T022 Registrar listeners síncronos de `runtime`, `action`, `windows` e mensagens no escopo superior, sem estado essencial em memória, em src/background/service-worker.ts
+- [x] T023 Implementar shell Ant Design em pt-BR, tema escuro padrão, navegação Diário/Projetos/Configurações, error boundary e feedback `aria-live` em src/ui/app/App.tsx, src/ui/theme/theme.ts e src/ui/components/AsyncState.tsx
 
 **Checkpoint**: build carrega a janela popup segura; contratos, storage e shell estão prontos para as histórias.
 
@@ -67,23 +67,23 @@
 
 ### Tests for User Story 1
 
-- [ ] T024 [P] [US1] Escrever testes de nome de projeto 1–100, duplicidade normalizada e estados ativo/arquivado em tests/unit/domain/project.test.ts
-- [ ] T025 [P] [US1] Escrever testes de detalhes obrigatórios 1–2.000, início/fim/duração equivalentes, mesmo dia, máximo 1.440 minutos e rejeição de futuro em tests/unit/domain/log-record.test.ts
+- [x] T024 [P] [US1] Escrever testes de nome de projeto 1–100, duplicidade normalizada e estados ativo/arquivado em tests/unit/domain/project.test.ts
+- [x] T025 [P] [US1] Escrever testes de detalhes obrigatórios 1–2.000, início/fim/duração equivalentes, mesmo dia, máximo 1.440 minutos e rejeição de futuro em tests/unit/domain/log-record.test.ts
 - [ ] T026 [P] [US1] Escrever testes de repositório para criação sem overwrite, índices por data/projeto, quota e leitura malformada em tests/integration/persistence/records-repository.test.ts
 - [ ] T027 [P] [US1] Escrever E2E primeiro para criar projeto/tarefa, validação acessível em blur/submit, preservação dos campos e persistência após reabrir em tests/e2e/us1-create-record.spec.ts
 
 ### Implementation for User Story 1
 
-- [ ] T028 [P] [US1] Implementar entidade e invariantes de `Project` em src/domain/entities/project.ts
-- [ ] T029 [P] [US1] Implementar entidade e invariantes de `LogRecord` sem campo de título em src/domain/entities/log-record.ts
-- [ ] T030 [US1] Implementar `IndexedDbProjectRepository` com nome normalizado e criação transacional em src/infrastructure/persistence/indexeddb/project-repository.ts
-- [ ] T031 [US1] Implementar `IndexedDbLogRecordRepository` com criação por `add` e consultas básicas por data/projeto em src/infrastructure/persistence/indexeddb/log-record-repository.ts
-- [ ] T032 [US1] Implementar casos de uso de criar/listar projeto com validação e erros controlados em src/application/use-cases/projects/create-project.ts e src/application/use-cases/projects/list-projects.ts
-- [ ] T033 [US1] Implementar caso de uso de criar tarefa calculando fim ou duração e rejeitando futuro/inconsistência antes da persistência em src/application/use-cases/records/create-record.ts
-- [ ] T034 [US1] Expor comandos e consultas de criação/listagem com schemas nas rotas allowlisted em src/background/handlers/projects.ts e src/background/handlers/records.ts
-- [ ] T035 [P] [US1] Implementar lista e formulário modal de novos projetos com estados vazio/erro/sucesso em src/ui/features/projects/ProjectList.tsx e src/ui/features/projects/ProjectForm.tsx
-- [ ] T036 [US1] Implementar formulário responsivo de tarefa com projeto, data, início, fim ou duração e detalhes obrigatórios em src/ui/features/records/RecordForm.tsx
-- [ ] T037 [US1] Implementar a lista diária base reutilizável pelo MVP e pelas consultas avançadas em src/ui/features/dashboard/DailyView.tsx
+- [x] T028 [P] [US1] Implementar entidade e invariantes de `Project` em src/domain/entities/project.ts
+- [x] T029 [P] [US1] Implementar entidade e invariantes de `LogRecord` sem campo de título em src/domain/entities/log-record.ts
+- [x] T030 [US1] Implementar `IndexedDbProjectRepository` com nome normalizado e criação transacional em src/infrastructure/persistence/indexeddb/project-repository.ts
+- [x] T031 [US1] Implementar `IndexedDbLogRecordRepository` com criação por `add` e consultas básicas por data/projeto em src/infrastructure/persistence/indexeddb/log-record-repository.ts
+- [x] T032 [US1] Implementar casos de uso de criar/listar projeto com validação e erros controlados em src/application/use-cases/projects/create-project.ts e src/application/use-cases/projects/list-projects.ts
+- [x] T033 [US1] Implementar caso de uso de criar tarefa calculando fim ou duração e rejeitando futuro/inconsistência antes da persistência em src/application/use-cases/records/create-record.ts
+- [x] T034 [US1] Expor comandos e consultas de criação/listagem com schemas nas rotas allowlisted em src/background/handlers/projects.ts e src/background/handlers/records.ts
+- [x] T035 [P] [US1] Implementar lista e formulário modal de novos projetos com estados vazio/erro/sucesso em src/ui/features/projects/ProjectList.tsx e src/ui/features/projects/ProjectForm.tsx
+- [x] T036 [US1] Implementar formulário responsivo de tarefa com projeto, data, início, fim ou duração e detalhes obrigatórios em src/ui/features/records/RecordForm.tsx
+- [x] T037 [US1] Implementar a lista diária base reutilizável pelo MVP e pelas consultas avançadas em src/ui/features/dashboard/DailyView.tsx
 
 **Checkpoint**: MVP funcional e testável sem consultas avançadas, feriados ou lembretes.
 
@@ -97,22 +97,22 @@
 
 ### Tests for User Story 2
 
-- [ ] T038 [P] [US2] Escrever testes dos intervalos diário, quinzenal 1–15/16–fim e mensal, inclusive navegação entre meses, em tests/unit/domain/period.test.ts
-- [ ] T039 [P] [US2] Escrever matriz de cálculo para dia útil, limite de 480 minutos, sábado, domingo, feriado, empate e sobreposição entre projetos em tests/unit/domain/hour-classifier.test.ts
+- [x] T038 [P] [US2] Escrever testes dos intervalos diário, quinzenal 1–15/16–fim e mensal, inclusive navegação entre meses, em tests/unit/domain/period.test.ts
+- [x] T039 [P] [US2] Escrever matriz de cálculo para dia útil, limite de 480 minutos, sábado, domingo, feriado, empate e sobreposição entre projetos em tests/unit/domain/hour-classifier.test.ts
 - [ ] T040 [P] [US2] Escrever testes de consultas inclusivas, paginação, projetos ativos/arquivados, busca case-insensitive, interseção dos filtros e resumos sobre 10.000 registros em tests/integration/queries/period-queries.test.ts
 - [ ] T041 [P] [US2] Escrever testes acessíveis para seletor de período, estados vazios, persistência/limpeza dos filtros e restauração de contexto do painel em tests/integration/ui/diary-views.test.tsx
 
 ### Implementation for User Story 2
 
-- [ ] T042 [P] [US2] Implementar value objects e navegação de períodos civis em src/domain/value-objects/period.ts
-- [ ] T043 [US2] Implementar classificação determinística de minutos normais/50%/100%, incluindo sobreposições e divisão na 8ª hora, em src/domain/services/hour-classifier.ts
-- [ ] T044 [US2] Implementar consulta IndexedDB indexada por intervalo, múltiplos projetos ativos/arquivados, busca case-insensitive nos detalhes, interseção e cursor em src/infrastructure/persistence/indexeddb/record-query-repository.ts
-- [ ] T045 [US2] Implementar `ListRecordsByPeriod` e `GetHourSummary` com totais gerais e por projeto em src/application/queries/list-records-by-period.ts e src/application/queries/get-hour-summary.ts
-- [ ] T046 [US2] Expor `record.listPeriod` e `summary.getPeriod` com limite máximo de 366 dias em src/background/handlers/period-queries.ts
-- [ ] T047 [P] [US2] Estender a `DailyView` do MVP com ordem estável, totais, filtros persistentes e estado vazio acionável em src/ui/features/dashboard/DailyView.tsx
-- [ ] T048 [P] [US2] Implementar visão quinzenal agrupada por todos os dias do período em src/ui/features/dashboard/FortnightView.tsx
-- [ ] T049 [P] [US2] Implementar calendário mensal largo e lista estreita equivalentes, exibindo quantidade por dia e abertura do detalhe diário em src/ui/features/dashboard/MonthlyView.tsx
-- [ ] T050 [US2] Implementar seletor Dia/Quinzena/Mês, navegação, filtros persistentes com ação limpar, resumo por projeto e painel que restaura contexto em src/ui/features/dashboard/DiaryPage.tsx e src/ui/features/records/RecordDetailsPanel.tsx
+- [x] T042 [P] [US2] Implementar value objects e navegação de períodos civis em src/domain/value-objects/period.ts
+- [x] T043 [US2] Implementar classificação determinística de minutos normais/50%/100%, incluindo sobreposições e divisão na 8ª hora, em src/domain/services/hour-classifier.ts
+- [x] T044 [US2] Implementar consulta IndexedDB indexada por intervalo, múltiplos projetos ativos/arquivados, busca case-insensitive nos detalhes, interseção e cursor em src/infrastructure/persistence/indexeddb/record-query-repository.ts
+- [x] T045 [US2] Implementar `ListRecordsByPeriod` e `GetHourSummary` com totais gerais e por projeto em src/application/queries/list-records-by-period.ts e src/application/queries/get-hour-summary.ts
+- [x] T046 [US2] Expor `record.listPeriod` e `summary.getPeriod` com limite máximo de 366 dias em src/background/handlers/period-queries.ts
+- [x] T047 [P] [US2] Estender a `DailyView` do MVP com ordem estável, totais, filtros persistentes e estado vazio acionável em src/ui/features/dashboard/DailyView.tsx
+- [x] T048 [P] [US2] Implementar visão quinzenal agrupada por todos os dias do período em src/ui/features/dashboard/FortnightView.tsx
+- [x] T049 [P] [US2] Implementar calendário mensal largo e lista estreita equivalentes, exibindo quantidade por dia e abertura do detalhe diário em src/ui/features/dashboard/MonthlyView.tsx
+- [x] T050 [US2] Implementar seletor Dia/Quinzena/Mês, navegação, filtros persistentes com ação limpar, resumo por projeto e painel que restaura contexto em src/ui/features/dashboard/DiaryPage.tsx e src/ui/features/records/RecordDetailsPanel.tsx
 - [ ] T051 [US2] Cobrir modos de período, cálculos e reuso/foco da janela em tests/e2e/us2-diary-periods.spec.ts
 
 **Checkpoint**: US1 e US2 entregam registro e consulta completa, ainda com calendário de feriados vazio/injetável.
@@ -127,31 +127,31 @@
 
 ### Tests for User Story 3
 
-- [ ] T052 [P] [US3] Escrever testes de contrato do manifesto, checksum, 27 UFs, códigos IBGE, datas, escopos e cobertura contínua `currentYear-5..currentYear+2` em tests/contract/holiday-dataset.test.ts
-- [ ] T053 [P] [US3] Escrever testes de lookup nacional/estadual/municipal, duplicidade, preservação do catálogo anterior e calendário indisponível fora da cobertura em tests/integration/holidays/holiday-catalog.test.ts
+- [x] T052 [P] [US3] Escrever testes de contrato do manifesto, checksum, 27 UFs, códigos IBGE, datas, escopos e cobertura contínua `currentYear-5..currentYear+2` em tests/contract/holiday-dataset.test.ts
+- [x] T053 [P] [US3] Escrever testes de lookup nacional/estadual/municipal, duplicidade, preservação do catálogo anterior e calendário indisponível fora da cobertura em tests/integration/holidays/holiday-catalog.test.ts
 - [ ] T054 [P] [US3] Escrever testes de settings por seção, revisão otimista, região pendente e recálculo sem alterar registros em tests/integration/settings/settings-repository.test.ts
-- [ ] T055 [P] [US3] Escrever testes determinísticos de recorrência diária/dias da semana, múltiplos horários, fuso atual e supressão de dia preenchido em tests/unit/domain/reminder-schedule.test.ts
-- [ ] T056 [P] [US3] Escrever testes de snooze 1–2.880, data original atravessando meia-noite/fuso, cancelamento ao preencher essa data, supressão intermediária e retomada futura em tests/unit/domain/reminder-snooze.test.ts
+- [x] T055 [P] [US3] Escrever testes determinísticos de recorrência diária/dias da semana, múltiplos horários, fuso atual e supressão de dia preenchido em tests/unit/domain/reminder-schedule.test.ts
+- [x] T056 [P] [US3] Escrever testes de snooze 1–2.880, data original atravessando meia-noite/fuso, cancelamento ao preencher essa data, supressão intermediária e retomada futura em tests/unit/domain/reminder-snooze.test.ts
 - [ ] T057 [P] [US3] Escrever testes com relógio controlado para permissão negada/revogada, limite de cinco minutos, reconciliação após restart e falhas da API de alarmes em tests/integration/chrome/reminder-alarms.test.ts
 - [ ] T058 [P] [US3] Escrever testes acessíveis das três seções, dirty state, validação junto ao controle e próxima ocorrência em tests/integration/ui/settings-page.test.tsx
 
 ### Implementation for User Story 3
 
-- [ ] T059 [P] [US3] Implementar script de release que gera a janela móvel `currentYear-5..currentYear+2`, valida revisão/checksums e preserva assets válidos em scripts/update-holidays.mjs
-- [ ] T060 [US3] Gerar manifesto com `minYear`/`maxYear`, municípios e anos 2021–2028 em public/data/holidays/manifest.json, public/data/holidays/municipalities.json e public/data/holidays/holidays-2021.json até public/data/holidays/holidays-2028.json
-- [ ] T061 [US3] Implementar schemas, importação transacional, provider regional e resultado explícito fora da cobertura em src/infrastructure/holidays/catalog-schema.ts e src/infrastructure/holidays/bundled-holiday-provider.ts
-- [ ] T062 [US3] Integrar `HolidayProvider` ao classificador e aplicar região somente após intenção confirmada, invalidando apenas totais derivados, em src/domain/services/hour-classifier.ts e src/application/use-cases/settings/update-region.ts
-- [ ] T063 [P] [US3] Implementar entidade `UserSettings`, regras de região e revisão em src/domain/entities/user-settings.ts
-- [ ] T064 [US3] Implementar repositório de configurações por seção e compare-and-swap em src/infrastructure/persistence/chrome-storage/settings-repository.ts
-- [ ] T065 [P] [US3] Implementar `ReminderSchedule`, próxima recorrência e snooze com `targetLocalDate`/cancelamento por preenchimento original em src/domain/entities/reminder-schedule.ts
-- [ ] T066 [US3] Implementar adaptador de permissão opcional e alarmes nomeados/reconstruíveis em src/infrastructure/chrome/alarm-adapter.ts
-- [ ] T067 [US3] Implementar casos de uso de atualizar/reconciliar lembretes e snooze preservando `targetLocalDate`, cancelando só por preenchimento original e suprimindo recorrências intermediárias em src/application/use-cases/reminders/update-reminders.ts, src/application/use-cases/reminders/reconcile-reminders.ts e src/application/use-cases/reminders/snooze-reminder.ts
-- [ ] T068 [US3] Tratar `alarms.onAlarm`, restart/instalação, supressão pela data-alvo e abertura/reuso da janela na data original em src/background/alarms.ts e src/background/service-worker.ts
-- [ ] T069 [US3] Expor settings, catálogo, permissão, reconciliação e snooze pela allowlist em src/background/handlers/settings.ts e src/background/handlers/reminders.ts
-- [ ] T070 [P] [US3] Implementar seleção UF/município, versão/cobertura, indisponibilidade fora da janela e confirmação antes de ativar em src/ui/features/settings/RegionSettings.tsx e src/ui/features/settings/RegionChangeConfirmDialog.tsx
-- [ ] T071 [P] [US3] Implementar seção somente leitura de jornada e categorias de horas em src/ui/features/settings/WorkdaySettings.tsx
-- [ ] T072 [US3] Implementar editor de frequência, dias, múltiplos horários, permissão e próxima ocorrência em src/ui/features/settings/ReminderSettings.tsx
-- [ ] T073 [US3] Implementar página rolável com salvamento independente/dirty guard e snooze que identifica a data original em src/ui/features/settings/SettingsPage.tsx e src/ui/features/records/SnoozeForm.tsx
+- [x] T059 [P] [US3] Implementar script de release que gera a janela móvel `currentYear-5..currentYear+2`, valida revisão/checksums e preserva assets válidos em scripts/update-holidays.mjs
+- [x] T060 [US3] Gerar manifesto com `minYear`/`maxYear`, municípios e anos 2021–2028 em public/data/holidays/manifest.json, public/data/holidays/municipalities.json e public/data/holidays/holidays-2021.json até public/data/holidays/holidays-2028.json
+- [x] T061 [US3] Implementar schemas, importação transacional, provider regional e resultado explícito fora da cobertura em src/infrastructure/holidays/catalog-schema.ts e src/infrastructure/holidays/bundled-holiday-provider.ts
+- [x] T062 [US3] Integrar `HolidayProvider` ao classificador e aplicar região somente após intenção confirmada, invalidando apenas totais derivados, em src/domain/services/hour-classifier.ts e src/application/use-cases/settings/update-region.ts
+- [x] T063 [P] [US3] Implementar entidade `UserSettings`, regras de região e revisão em src/domain/entities/user-settings.ts
+- [x] T064 [US3] Implementar repositório de configurações por seção e compare-and-swap em src/infrastructure/persistence/chrome-storage/settings-repository.ts
+- [x] T065 [P] [US3] Implementar `ReminderSchedule`, próxima recorrência e snooze com `targetLocalDate`/cancelamento por preenchimento original em src/domain/entities/reminder-schedule.ts
+- [x] T066 [US3] Implementar adaptador de permissão opcional e alarmes nomeados/reconstruíveis em src/infrastructure/chrome/alarm-adapter.ts
+- [x] T067 [US3] Implementar casos de uso de atualizar/reconciliar lembretes e snooze preservando `targetLocalDate`, cancelando só por preenchimento original e suprimindo recorrências intermediárias em src/application/use-cases/reminders/update-reminders.ts, src/application/use-cases/reminders/reconcile-reminders.ts e src/application/use-cases/reminders/snooze-reminder.ts
+- [x] T068 [US3] Tratar `alarms.onAlarm`, restart/instalação, supressão pela data-alvo e abertura/reuso da janela na data original em src/background/alarms.ts e src/background/service-worker.ts
+- [x] T069 [US3] Expor settings, catálogo, permissão, reconciliação e snooze pela allowlist em src/background/handlers/settings.ts e src/background/handlers/reminders.ts
+- [x] T070 [P] [US3] Implementar seleção UF/município, versão/cobertura, indisponibilidade fora da janela e confirmação antes de ativar em src/ui/features/settings/RegionSettings.tsx e src/ui/features/settings/RegionChangeConfirmDialog.tsx
+- [x] T071 [P] [US3] Implementar seção somente leitura de jornada e categorias de horas em src/ui/features/settings/WorkdaySettings.tsx
+- [x] T072 [US3] Implementar editor de frequência, dias, múltiplos horários, permissão e próxima ocorrência em src/ui/features/settings/ReminderSettings.tsx
+- [x] T073 [US3] Implementar página rolável com salvamento independente/dirty guard e snooze que identifica a data original em src/ui/features/settings/SettingsPage.tsx e src/ui/features/records/SnoozeForm.tsx
 - [ ] T074 [P] [US3] Cobrir seleção regional, confirmar/cancelar troca, cobertura anual, falha de catálogo e recálculo em tests/e2e/us3-region-settings.spec.ts
 - [ ] T075 [US3] Cobrir com relógio controlado o limite de cinco minutos, múltiplos horários, restart, snooze através de dia/fuso, cancelamento pela data original, colisão e janela única em tests/e2e/us3-reminders.spec.ts
 
@@ -167,21 +167,21 @@
 
 ### Tests for User Story 4
 
-- [ ] T076 [P] [US4] Escrever testes de atualização/exclusão por `expectedRevision`, identidade preservada e conflito com entidade atual em tests/integration/persistence/optimistic-concurrency.test.ts
-- [ ] T077 [P] [US4] Escrever testes de mover tarefa, renomear/arquivar projeto e proteger histórico em tests/unit/application/history-maintenance.test.ts
-- [ ] T078 [P] [US4] Escrever testes do diálogo de conflito, diferenças por campo, foco e caminhos recarregar/reaplicar em tests/integration/ui/conflict-resolution.test.tsx
+- [x] T076 [P] [US4] Escrever testes de atualização/exclusão por `expectedRevision`, identidade preservada e conflito com entidade atual em tests/integration/persistence/optimistic-concurrency.test.ts
+- [x] T077 [P] [US4] Escrever testes de mover tarefa, renomear/arquivar projeto e proteger histórico em tests/unit/application/history-maintenance.test.ts
+- [x] T078 [P] [US4] Escrever testes do diálogo de conflito, diferenças por campo, foco e caminhos recarregar/reaplicar em tests/integration/ui/conflict-resolution.test.tsx
 - [ ] T079 [P] [US4] Escrever E2E de duas janelas concorrentes e manutenção do histórico em tests/e2e/us4-history-conflicts.spec.ts
 
 ### Implementation for User Story 4
 
-- [ ] T080 [US4] Implementar compare-and-swap transacional para update/delete de projeto e tarefa em src/infrastructure/persistence/indexeddb/project-repository.ts e src/infrastructure/persistence/indexeddb/log-record-repository.ts
-- [ ] T081 [P] [US4] Implementar casos de uso de editar, mover e excluir tarefa com confirmação e revisão esperada em src/application/use-cases/records/update-record.ts e src/application/use-cases/records/delete-record.ts
-- [ ] T082 [P] [US4] Implementar casos de uso de renomear e arquivar projeto preservando referências em src/application/use-cases/projects/update-project.ts e src/application/use-cases/projects/archive-project.ts
-- [ ] T083 [US4] Expor updates/deletes, `CONFLICT` e eventos `entity.changed` em src/background/handlers/projects.ts e src/background/handlers/records.ts
-- [ ] T084 [P] [US4] Implementar detalhes/edição/exclusão com restauração de foco e contexto em src/ui/features/records/RecordDetailsPanel.tsx
-- [ ] T085 [P] [US4] Implementar gerenciamento de projetos ativos/arquivados sem reativação e confirmação explicativa em src/ui/features/projects/ProjectsPage.tsx
-- [ ] T086 [US4] Implementar diálogo de comparação e ações recarregar/reaplicar sem overwrite silencioso em src/ui/components/ConflictDialog.tsx
-- [ ] T087 [US4] Revalidar telas abertas por eventos de revisão sem duplicar o E2E escrito em T079 em src/ui/hooks/useEntityChanges.ts
+- [x] T080 [US4] Implementar compare-and-swap transacional para update/delete de projeto e tarefa em src/infrastructure/persistence/indexeddb/project-repository.ts e src/infrastructure/persistence/indexeddb/log-record-repository.ts
+- [x] T081 [P] [US4] Implementar casos de uso de editar, mover e excluir tarefa com confirmação e revisão esperada em src/application/use-cases/records/update-record.ts e src/application/use-cases/records/delete-record.ts
+- [x] T082 [P] [US4] Implementar casos de uso de renomear e arquivar projeto preservando referências em src/application/use-cases/projects/update-project.ts e src/application/use-cases/projects/archive-project.ts
+- [x] T083 [US4] Expor updates/deletes, `CONFLICT` e eventos `entity.changed` em src/background/handlers/projects.ts e src/background/handlers/records.ts
+- [x] T084 [P] [US4] Implementar detalhes/edição/exclusão com restauração de foco e contexto em src/ui/features/records/RecordDetailsPanel.tsx
+- [x] T085 [P] [US4] Implementar gerenciamento de projetos ativos/arquivados sem reativação e confirmação explicativa em src/ui/features/projects/ProjectsPage.tsx
+- [x] T086 [US4] Implementar diálogo de comparação e ações recarregar/reaplicar sem overwrite silencioso em src/ui/components/ConflictDialog.tsx
+- [x] T087 [US4] Revalidar telas abertas por eventos de revisão sem duplicar o E2E escrito em T079 em src/ui/hooks/useEntityChanges.ts
 
 **Checkpoint**: todas as quatro histórias estão completas e testáveis com integridade concorrente.
 
@@ -191,15 +191,15 @@
 
 **Purpose**: Validar desempenho, acessibilidade, segurança, restart/migração e entrega completa.
 
-- [ ] T088 [P] Criar benchmark determinístico de 10.000 tarefas e meta p95 de 2 segundos em tests/performance/period-query.bench.ts
-- [ ] T089 Otimizar índices, paginação e virtualização somente conforme o benchmark em src/infrastructure/persistence/indexeddb/record-query-repository.ts e src/ui/features/dashboard/DiaryPage.tsx
+- [x] T088 [P] Criar benchmark determinístico de 10.000 tarefas e meta p95 de 2 segundos em tests/performance/period-query.bench.ts
+- [x] T089 Otimizar índices, paginação e virtualização somente conforme o benchmark em src/infrastructure/persistence/indexeddb/record-query-repository.ts e src/ui/features/dashboard/DiaryPage.tsx
 - [ ] T090 [P] Cobrir teclado, foco, anúncios, ausência de dependência de cor/hover e layouts 360×600, 640×700, 960×720 e 1440×900 em tests/e2e/accessibility-responsive.spec.ts
-- [ ] T091 [P] Criar auditoria automatizada de permissões, CSP, ausência de código remoto/tokens e bundle local em tests/contract/manifest-security.test.ts
+- [x] T091 [P] Criar auditoria automatizada de permissões, CSP, ausência de código remoto/tokens e bundle local em tests/contract/manifest-security.test.ts
 - [ ] T092 [P] Cobrir migração, quota, dados malformados e restart do service worker sem perda de fonte de verdade em tests/e2e/storage-recovery.spec.ts
-- [ ] T093 Revisar mensagens e diagnósticos para excluir detalhes, nomes de projeto e região em src/domain/errors/app-error.ts e src/background/messages.ts
-- [ ] T094 Documentar instalação, build, carregamento unpacked, permissões e atualização do dataset em README.md
+- [x] T093 Revisar mensagens e diagnósticos para excluir detalhes, nomes de projeto e região em src/domain/errors/app-error.ts e src/background/messages.ts
+- [x] T094 Documentar instalação, build, carregamento unpacked, permissões e atualização do dataset em README.md
 - [ ] T095 Executar typecheck, lint, cobertura, build, E2E e todos os cenários de quickstart, registrando resultados e exceções em specs/001-project-logbook/validation-report.md
-- [ ] T096 Reconsultar `modern-web-guidance` e documentação oficial Chrome antes da entrega e registrar mudanças de suporte/fallback em specs/001-project-logbook/plan.md
+- [x] T096 Reconsultar `modern-web-guidance` e documentação oficial Chrome antes da entrega e registrar mudanças de suporte/fallback em specs/001-project-logbook/plan.md
 
 ---
 

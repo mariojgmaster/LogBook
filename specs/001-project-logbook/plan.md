@@ -124,3 +124,11 @@ tests/
 ## Complexity Tracking
 
 Nenhuma violação constitucional identificada. O uso combinado de IndexedDB e `chrome.storage.local` é encapsulado por uma única camada de persistência: IndexedDB atende consultas/indexação de dados volumosos; `chrome.storage.local` atende configurações pequenas e integração natural com eventos da extensão.
+
+## Verificação de suporte antes da entrega (2026-08-17)
+
+- A documentação oficial atual do Chrome confirma que listeners de eventos do service worker devem ser registrados sincronicamente no escopo superior; a implementação mantém `runtime`, `action`, `windows`, `permissions` e `alarms` nesse formato: <https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/events>.
+- O Chrome pode encerrar o worker após inatividade e variáveis globais não são fonte de verdade; banco, configurações, janela e alarmes são reconstruídos de armazenamento persistente: <https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle>.
+- Alarmes não acordam o dispositivo, disparos perdidos podem ocorrer uma vez ao despertar e alarmes podem sofrer atraso arbitrário. Por isso, instalação, startup, retomada e cada disparo executam reconciliação: <https://developer.chrome.com/docs/extensions/reference/api/alarms>.
+- `persistAcrossSessions` só está documentado para Chrome 150+. Como o mínimo do projeto continua Chrome 120, a implementação não depende dessa propriedade e sempre reconstrói alarmes importantes.
+- A consulta ao `modern-web-guidance` 2026_05_16 manteve dark mode no elemento raiz, alvos de 44 px, validação após interação, foco visível, redução de movimento e componentes responsivos por container.
