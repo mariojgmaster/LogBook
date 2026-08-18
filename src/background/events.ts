@@ -1,5 +1,5 @@
 export const broadcastEntityChange = (
-  entity: 'project' | 'record' | 'settings' | 'reminder',
+  entity: 'project' | 'record' | 'settings' | 'reminder' | 'draft' | 'preferences',
   id: string,
   revision: number,
 ) => {

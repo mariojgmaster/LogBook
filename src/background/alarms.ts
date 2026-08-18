@@ -11,6 +11,10 @@ export const handleAlarm = async (alarm: chrome.alarms.Alarm, root: CompositionR
       targetLocalDate: occurrence.targetLocalDate,
       slotId: occurrence.slotId,
     });
+    const settings = await root.repositories.settings.getUserSettings();
+    await root.audio
+      .play(settings.reminderSoundId ?? 'gentle-bell', alarm.name)
+      .catch(() => undefined);
   }
   await root.reconcileReminders.execute();
 };

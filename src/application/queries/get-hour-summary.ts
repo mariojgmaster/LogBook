@@ -8,6 +8,7 @@ export class GetHourSummary {
   ) {}
   async execute(period: Period) {
     assertPeriodLimit(period);
-    return classifyHours(await this.records.listRange(period.start, period.end), this.holidays);
+    const intersectingRecords = await this.records.listRange(period.start, period.end);
+    return classifyHours(intersectingRecords, this.holidays);
   }
 }

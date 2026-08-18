@@ -14,5 +14,30 @@ export interface AlarmPort {
   list(): Promise<Array<{ name: string; when: number }>>;
 }
 
+export interface SidePanelPort {
+  enableActionClick(): Promise<void>;
+  open(windowId?: number): Promise<void>;
+}
+
+export interface OptionalPermissionPort {
+  contains(permissions: readonly 'alarms'[]): Promise<boolean>;
+  request(permissions: readonly 'alarms'[]): Promise<boolean>;
+  ensure(permissions: readonly 'alarms'[]): Promise<boolean>;
+}
+
+export interface ReminderWindowPort {
+  openOrFocus(targetLocalDate: string, slotId: string): Promise<number>;
+  forget(windowId: number): Promise<void>;
+}
+
+export interface ReminderAudioPort {
+  play(soundId: string, playbackId: string): Promise<void>;
+  close(): Promise<void>;
+}
+
+export interface ClipboardPort {
+  writeText(value: string): Promise<void>;
+}
+
 export const systemClock: Clock = { now: () => new Date() };
 export const cryptoIdGenerator: IdGenerator = { next: () => crypto.randomUUID() };

@@ -52,6 +52,10 @@ export const navigatePeriod = (period: Period, direction: -1 | 1): Period => {
 export const assertPeriodLimit = (period: Period) => {
   let days = 1;
   let cursor = LocalDate.parse(period.start);
+  const end = LocalDate.parse(period.end);
+  if (cursor.value > end.value) {
+    throw new AppError('VALIDATION', { period: 'A data inicial deve anteceder a data final.' });
+  }
   while (cursor.value < period.end && days <= 367) {
     cursor = cursor.addDays(1);
     days += 1;

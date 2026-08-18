@@ -10,15 +10,17 @@ export class UpdateRecord {
   ) {}
   async execute(
     id: string,
-    expectedRevision: number,
-    input: Omit<CreateLogRecordInput, 'id' | 'now'>,
+    inputOrLegacyRevision: Omit<CreateLogRecordInput, 'id' | 'now'> | number,
+    legacyInput?: Omit<CreateLogRecordInput, 'id' | 'now'>,
   ) {
+    const input = typeof inputOrLegacyRevision === 'number' ? legacyInput! : inputOrLegacyRevision;
     const current = await this.records.get(id);
     if (!current) throw new AppError('NOT_FOUND');
     const project = await this.projects.get(input.projectId);
     if (!project) throw new AppError('VALIDATION', { projectId: 'Projeto inválido.' });
     const updated = LogRecord.restore(current).update({ ...input, now: this.clock.now() });
-    await this.records.update(updated, expectedRevision);
-    return updated.props;
+    const legacyExpected =
+      typeof inputOrLegacyRevision === 'number' ? inputOrLegacyRevision : undefined;
+    return (await this.records.update(updated, legacyExpected)) ?? updated.props;
   }
 }

@@ -4,9 +4,10 @@
   "description": "Diário de bordo local com horas por projeto e lembretes.",
   "version": "0.1.0",
   "minimum_chrome_version": "120",
-  "permissions": ["storage"],
+  "permissions": ["storage", "sidePanel", "offscreen"],
   "optional_permissions": ["alarms"],
   "action": { "default_title": "Abrir LogBook" },
+  "side_panel": { "default_path": "sidepanel.html" },
   "background": { "service_worker": "service-worker.js", "type": "module" },
   "content_security_policy": { "extension_pages": "script-src 'self'; object-src 'none';" }
 }

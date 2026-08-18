@@ -6,6 +6,7 @@ import { handleRecordRequest } from './handlers/records';
 import { handlePeriodRequest } from './handlers/period-queries';
 import { handleSettingsRequest } from './handlers/settings';
 import { handleReminderRequest } from './handlers/reminders';
+import { handleDraftRequest } from './handlers/drafts';
 
 export const dispatchMessage = async (
   raw: unknown,
@@ -41,9 +42,18 @@ const handleRequest = async (request: AppRequest, root: CompositionRoot): Promis
   if (
     request.type === 'settings.get' ||
     request.type === 'settings.updateRegion' ||
-    request.type === 'holiday.coverage'
+    request.type === 'settings.updateMonthView' ||
+    request.type === 'settings.updateReminderSound' ||
+    request.type === 'holiday.coverage' ||
+    request.type === 'holiday.listPeriod'
   )
     return handleSettingsRequest(request, root);
+  if (
+    request.type === 'draft.get' ||
+    request.type === 'draft.upsert' ||
+    request.type === 'draft.delete'
+  )
+    return handleDraftRequest(request, root);
   return handleReminderRequest(
     request as Extract<AppRequest, { type: `reminder.${string}` }>,
     root,

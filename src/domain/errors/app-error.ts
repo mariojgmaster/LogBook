@@ -8,12 +8,18 @@ export const APP_ERROR_CODES = [
   'PERMISSION_DENIED',
   'HOLIDAY_DATA_UNAVAILABLE',
   'INVALID_MESSAGE',
+  'PROJECT_HAS_RECORDS',
+  'DRAFT_UNAVAILABLE',
+  'AUDIO_UNAVAILABLE',
   'UNEXPECTED',
 ] as const;
 
 export type AppErrorCode = (typeof APP_ERROR_CODES)[number];
 
 const safeMessages: Record<AppErrorCode, string> = {
+  PROJECT_HAS_RECORDS: 'O projeto ainda possui registros vinculados.',
+  DRAFT_UNAVAILABLE: 'Não foi possível garantir a recuperação deste rascunho.',
+  AUDIO_UNAVAILABLE: 'Não foi possível reproduzir o som do lembrete.',
   VALIDATION: 'Revise os campos informados.',
   NOT_FOUND: 'O item solicitado não foi encontrado.',
   CONFLICT: 'Este item foi alterado em outra janela. Recarregue os dados.',

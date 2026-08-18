@@ -29,10 +29,13 @@ export const classifyHours = (
   const result: HourSummary = { ...empty(), available: true, records: [], byProject: {} };
   const byDate = new Map<string, LogRecordProps[]>();
   for (const record of records) {
-    const values = byDate.get(record.localDate) ?? [];
-    values.push(record);
-    byDate.set(record.localDate, values);
+    for (const dailyRecord of splitByDay(record)) {
+      const values = byDate.get(dailyRecord.localDate) ?? [];
+      values.push(dailyRecord);
+      byDate.set(dailyRecord.localDate, values);
+    }
   }
+  const classified = new Map<string, ClassifiedRecord>();
   for (const [dateValue, dayRecords] of byDate) {
     const holiday = holidays.isHoliday(dateValue);
     if (holiday === undefined) result.available = false;
@@ -56,11 +59,53 @@ export const classifyHours = (
         buckets.overtime50 = record.durationMinutes - buckets.regular;
         usedRegular += buckets.regular;
       }
-      result.records.push({ ...buckets, recordId: record.id, projectId: record.projectId });
+      const logical = classified.get(record.id) ?? {
+        ...empty(),
+        recordId: record.id,
+        projectId: record.projectId,
+      };
+      addBuckets(logical, buckets);
+      classified.set(record.id, logical);
       addBuckets(result, buckets);
       const project = (result.byProject[record.projectId] ??= empty());
       addBuckets(project, buckets);
     }
+  }
+  result.records = records.flatMap((record, index) =>
+    records.findIndex((candidate) => candidate.id === record.id) === index
+      ? [classified.get(record.id)!]
+      : [],
+  );
+  return result;
+};
+
+const splitByDay = (record: LogRecordProps): LogRecordProps[] => {
+  const endDate = LocalDate.parse(record.endLocalDate ?? record.localDate);
+  let cursor = LocalDate.parse(record.localDate);
+  const result: LogRecordProps[] = [];
+  let lunchMinutes = record.withoutLunchBreak === false ? 60 : 0;
+  while (cursor.value < endDate.value || (cursor.value === endDate.value && record.endMinute > 0)) {
+    const startMinute = cursor.value === record.localDate ? record.startMinute : 0;
+    const endMinute = cursor.value === endDate.value ? record.endMinute : 1440;
+    if (endMinute > startMinute) {
+      const elapsedMinutes = endMinute - startMinute;
+      const deductedLunch = Math.min(lunchMinutes, elapsedMinutes);
+      lunchMinutes -= deductedLunch;
+      const durationMinutes = elapsedMinutes - deductedLunch;
+      if (durationMinutes < 1) {
+        cursor = cursor.addDays(1);
+        continue;
+      }
+      result.push({
+        ...record,
+        localDate: cursor.value,
+        endLocalDate: cursor.value,
+        startMinute,
+        endMinute,
+        durationMinutes,
+      });
+    }
+    cursor = cursor.addDays(1);
   }
   return result;
 };
