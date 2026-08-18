@@ -4,7 +4,9 @@ import { App as AntApp, Button, DatePicker, Input, Segmented, Select, Space } fr
 import dayjs from 'dayjs';
 import type { LogRecordProps } from '@/domain/entities/log-record';
 import type { ProjectProps } from '@/domain/entities/project';
+import type { MonthViewMode, UserSettingsProps } from '@/domain/entities/user-settings';
 import type { HourSummary } from '@/domain/services/hour-classifier';
+import type { HolidayOccurrence } from '@/domain/entities/holiday';
 import { LocalDate } from '@/domain/value-objects/local-date';
 import { navigatePeriod, periodFor, type PeriodMode } from '@/domain/value-objects/period';
 import { AppError } from '@/domain/errors/app-error';
@@ -33,13 +35,21 @@ const getFilters = (): { projectIds: string[]; search: string } => {
   }
 };
 
-export function DiaryPage({ newRecordSignal }: { newRecordSignal: number }) {
+export function DiaryPage({
+  newRecordSignal,
+  onNewRecordSignalHandled,
+}: {
+  newRecordSignal: number;
+  onNewRecordSignalHandled: () => void;
+}) {
   const { message } = AntApp.useApp();
   const [mode, setMode] = useState<PeriodMode>('day');
   const [anchor, setAnchor] = useState(LocalDate.fromDate(new Date()).value);
   const [projects, setProjects] = useState<ProjectProps[]>([]);
   const [records, setRecords] = useState<LogRecordProps[]>([]);
   const [summary, setSummary] = useState<HourSummary>();
+  const [monthMode, setMonthMode] = useState<MonthViewMode>('notice');
+  const [holidays, setHolidays] = useState<HolidayOccurrence[]>([]);
   const initial = useMemo(() => getFilters(), []);
   const [projectIds, setProjectIds] = useState(initial.projectIds);
   const [search, setSearch] = useState(initial.search);
@@ -51,7 +61,7 @@ export function DiaryPage({ newRecordSignal }: { newRecordSignal: number }) {
   const period = useMemo(() => periodFor(anchor, mode), [anchor, mode]);
   const load = useCallback(async () => {
     try {
-      const [projectData, page, summaryData] = await Promise.all([
+      const [projectData, page, summaryData, settingsData, holidayData] = await Promise.all([
         sendAppMessage<ProjectProps[]>({
           type: 'project.list',
           payload: { includeArchived: true },
@@ -61,11 +71,18 @@ export function DiaryPage({ newRecordSignal }: { newRecordSignal: number }) {
           payload: { ...period, projectIds, search },
         }),
         sendAppMessage<HourSummary>({ type: 'summary.getPeriod', payload: period }),
+        sendAppMessage<{ user: UserSettingsProps }>({ type: 'settings.get', payload: {} }),
+        sendAppMessage<HolidayOccurrence[]>({
+          type: 'holiday.listPeriod',
+          payload: { start: period.start, end: period.end },
+        }),
       ]);
       setError(undefined);
       setProjects(projectData);
       setRecords(page.items);
       setSummary(summaryData);
+      setMonthMode(settingsData.user.monthViewMode ?? 'notice');
+      setHolidays(holidayData);
       localStorage.setItem(FILTER_KEY, JSON.stringify({ projectIds, search }));
     } catch (cause) {
       setError(AppError.fromUnknown(cause).message);
@@ -85,9 +102,10 @@ export function DiaryPage({ newRecordSignal }: { newRecordSignal: number }) {
     const timer = setTimeout(() => {
       setFormDate(anchor);
       setFormOpen(true);
+      onNewRecordSignalHandled();
     }, 0);
     return () => clearTimeout(timer);
-  }, [newRecordSignal, anchor]);
+  }, [newRecordSignal, anchor, onNewRecordSignalHandled]);
   const openCreate = (date = anchor) => {
     if (!projects.some((project) => project.status === 'active')) {
       message.warning('Crie um projeto ativo antes do primeiro registro.');
@@ -194,10 +212,11 @@ export function DiaryPage({ newRecordSignal }: { newRecordSignal: number }) {
         <MonthlyView
           period={period}
           records={records}
-          onOpenDay={(date) => {
-            setAnchor(date);
-            setMode('day');
-          }}
+          projects={projects}
+          holidays={holidays}
+          mode={monthMode}
+          onOpenRecord={setSelected}
+          onCreateDate={openCreate}
         />
       )}
       <RecordForm

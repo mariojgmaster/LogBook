@@ -1,4 +1,5 @@
-import { ClockCircleOutlined, FolderOutlined } from '@ant-design/icons';
+import { useState } from 'react';
+import { ClockCircleOutlined, CopyOutlined, FolderOutlined } from '@ant-design/icons';
 import { Button, Card, Space, Tag, Typography } from 'antd';
 import type { LogRecordProps } from '@/domain/entities/log-record';
 import type { ProjectProps } from '@/domain/entities/project';
@@ -6,6 +7,8 @@ import type { HourSummary } from '@/domain/services/hour-classifier';
 import { formatClockTime } from '@/domain/value-objects/time-range';
 import { EmptyState } from '@/ui/components/AsyncState';
 import { formatMinutes } from '@/ui/utils/time';
+import type { ClipboardPort } from '@/application/ports/platform';
+import { browserClipboard } from '@/infrastructure/browser/clipboard-adapter';
 
 export function SummaryCards({ summary }: { summary?: HourSummary }) {
   if (!summary) return null;
@@ -34,17 +37,36 @@ export function DailyView({
   summary,
   onOpen,
   onCreate,
+  clipboard = browserClipboard,
 }: {
   records: LogRecordProps[];
   projects: ProjectProps[];
   summary?: HourSummary;
   onOpen: (record: LogRecordProps) => void;
   onCreate: () => void;
+  clipboard?: ClipboardPort;
 }) {
   const names = new Map(projects.map((project) => [project.id, project.name]));
+  const [copyFeedback, setCopyFeedback] = useState<{
+    kind: 'success' | 'error';
+    message: string;
+  }>();
+  const copyDetails = async (record: LogRecordProps) => {
+    try {
+      await clipboard.writeText(record.details);
+      setCopyFeedback({ kind: 'success', message: 'Descrição copiada.' });
+    } catch {
+      setCopyFeedback({ kind: 'error', message: 'Não foi possível copiar a descrição.' });
+    }
+  };
   return (
     <>
       <SummaryCards summary={summary} />
+      {copyFeedback ? (
+        <span className="copy-feedback" role={copyFeedback.kind === 'error' ? 'alert' : 'status'}>
+          {copyFeedback.message}
+        </span>
+      ) : null}
       {records.length === 0 ? (
         <div className="empty-action">
           <EmptyState
@@ -86,15 +108,26 @@ export function DailyView({
                   {formatClockTime(record.startMinute)}–{formatClockTime(record.endMinute)}
                 </Tag>
                 <Typography.Text>{formatMinutes(record.durationMinutes)}</Typography.Text>
-                <Button
-                  type="link"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    onOpen(record);
-                  }}
-                >
-                  Detalhes
-                </Button>
+                <div className="record-actions">
+                  <Button
+                    type="link"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onOpen(record);
+                    }}
+                  >
+                    Detalhes
+                  </Button>
+                  <Button
+                    type="text"
+                    icon={<CopyOutlined />}
+                    aria-label={`Copiar descrição de ${names.get(record.projectId) ?? 'projeto arquivado'}`}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      void copyDetails(record);
+                    }}
+                  />
+                </div>
               </div>
             </Card>
           ))}

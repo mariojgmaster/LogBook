@@ -69,7 +69,6 @@ export function RecordDetailsPanel({
         type: 'record.update',
         payload: {
           id: record.id,
-          expectedRevision: conflict.current.revision,
           record: conflict.draft,
         },
       });

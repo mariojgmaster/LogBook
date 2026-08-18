@@ -1,74 +1,66 @@
-import { Badge, Button, List, Typography } from 'antd';
+import { useEffect, useRef, useState } from 'react';
 import type { LogRecordProps } from '@/domain/entities/log-record';
+import type { ProjectProps } from '@/domain/entities/project';
+import type { MonthViewMode } from '@/domain/entities/user-settings';
 import type { Period } from '@/domain/value-objects/period';
-import { LocalDate } from '@/domain/value-objects/local-date';
+import type { HolidayOccurrence } from '@/domain/entities/holiday';
+import { EventRangeCalendar } from './EventRangeCalendar';
+import { NoticeCalendar } from './NoticeCalendar';
+import '@/ui/theme/month-calendar.css';
 
 export function MonthlyView({
   period,
   records,
-  onOpenDay,
+  projects,
+  holidays = [],
+  mode,
+  onOpenRecord,
+  onCreateDate,
+  layout: controlledLayout,
 }: {
   period: Period;
   records: LogRecordProps[];
-  onOpenDay: (date: string) => void;
+  projects: ProjectProps[];
+  holidays?: HolidayOccurrence[];
+  mode: MonthViewMode;
+  onOpenRecord: (record: LogRecordProps) => void;
+  onCreateDate: (date: string) => void;
+  layout?: 'narrow' | 'wide';
 }) {
-  const counts = new Map<string, number>();
-  records.forEach((record) =>
-    counts.set(record.localDate, (counts.get(record.localDate) ?? 0) + 1),
-  );
-  const days: string[] = [];
-  let current = LocalDate.parse(period.start);
-  while (current.value <= period.end) {
-    days.push(current.value);
-    current = current.addDays(1);
-  }
-  const offset = LocalDate.parse(period.start).dayOfWeek();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [measuredLayout, setMeasuredLayout] = useState<'narrow' | 'wide'>('narrow');
+  useEffect(() => {
+    if (controlledLayout || !containerRef.current || !globalThis.ResizeObserver) return;
+    const observer = new ResizeObserver(([entry]) => {
+      setMeasuredLayout((entry?.contentRect.width ?? 0) >= 480 ? 'wide' : 'narrow');
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [controlledLayout]);
+  const layout = controlledLayout ?? measuredLayout;
   return (
-    <>
-      <div className="calendar-grid desktop-only" aria-label="Calendário mensal">
-        {Array.from({ length: offset }, (_, index) => (
-          <span key={`blank-${index}`} />
-        ))}
-        {days.map((date) => (
-          <button
-            type="button"
-            className="calendar-day"
-            key={date}
-            onClick={() => onOpenDay(date)}
-            aria-label={`${date}: ${counts.get(date) ?? 0} registros`}
-          >
-            <Typography.Text strong>{Number(date.slice(-2))}</Typography.Text>
-            <br />
-            {(counts.get(date) ?? 0) > 0 && (
-              <Badge count={counts.get(date)} showZero={false} color="#65d6ad" />
-            )}
-          </button>
-        ))}
-      </div>
-      <List
-        className="mobile-only"
-        style={{ display: 'block' }}
-        dataSource={days}
-        renderItem={(date) => (
-          <List.Item
-            actions={[
-              <Button key="open" type="link" onClick={() => onOpenDay(date)}>
-                Abrir
-              </Button>,
-            ]}
-          >
-            <List.Item.Meta
-              title={new Intl.DateTimeFormat('pt-BR', {
-                day: '2-digit',
-                month: 'long',
-                weekday: 'short',
-                timeZone: 'UTC',
-              }).format(new Date(`${date}T12:00:00Z`))}
-              description={`${counts.get(date) ?? 0} registro(s)`}
-            />
-          </List.Item>
-        )}
-      />
-    </>
+    <div className="month-calendar" ref={containerRef} data-layout={layout}>
+      {mode === 'notice' ? (
+        <NoticeCalendar
+          period={period}
+          records={records}
+          projects={projects}
+          holidays={holidays}
+          layout={layout}
+          onOpenRecord={onOpenRecord}
+          onCreateDate={onCreateDate}
+        />
+      ) : (
+        <EventRangeCalendar
+          period={period}
+          records={records}
+          projects={projects}
+          holidays={holidays}
+          layout={layout}
+          onOpenRecord={onOpenRecord}
+          onCreateDate={onCreateDate}
+        />
+      )}
+    </div>
   );
 }

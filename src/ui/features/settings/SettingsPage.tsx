@@ -9,6 +9,7 @@ import { SnoozeForm } from '@/ui/features/records/SnoozeForm';
 import { RegionSettings } from './RegionSettings';
 import { ReminderSettings } from './ReminderSettings';
 import { WorkdaySettings } from './WorkdaySettings';
+import { MonthViewSettings } from './MonthViewSettings';
 
 interface SettingsView {
   user: UserSettingsProps;
@@ -73,9 +74,12 @@ export function SettingsPage({
           onSaved={saved}
           onDirtyChange={setDirty}
         />
+        <MonthViewSettings settings={data.user} onSaved={saved} onDirtyChange={setDirty} />
         <WorkdaySettings />
         <ReminderSettings
           reminders={data.reminders}
+          reminderSoundId={data.user.reminderSoundId ?? 'gentle-bell'}
+          settingsRevision={data.user.revision}
           permission={data.permission}
           nextOccurrence={data.nextOccurrence}
           onSaved={saved}
