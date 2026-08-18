@@ -40,6 +40,15 @@ describe('hour classifier', () => {
       classifyHours([record('1', '2026-08-17', 480, 60)], { isHoliday: () => true }).overtime100,
     ).toBe(60);
   });
+  it('does not add the lunch interval back into accountable totals', () => {
+    const withLunch = {
+      ...record('1', '2026-08-17', 660, 420),
+      endMinute: 1080,
+      durationMinutes: 360,
+      withoutLunchBreak: false,
+    };
+    expect(classifyHours([withLunch], { isHoliday: () => false }).total).toBe(360);
+  });
   it('marks totals unavailable outside catalog coverage', () =>
     expect(
       classifyHours([record('1', '2030-01-01', 480, 60)], { isHoliday: () => undefined }).available,

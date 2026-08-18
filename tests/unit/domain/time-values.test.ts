@@ -13,6 +13,9 @@ describe('civil time value objects', () => {
     expect(parseClockTime('08:30')).toBe(510);
     expect(formatClockTime(1440)).toBe('24:00');
     expect(TimeRange.fromDuration(480, 480).endMinute).toBe(960);
-    expect(() => TimeRange.fromDuration(1380, 120)).toThrow();
+    expect(TimeRange.fromDuration(1380, 120)).toMatchObject({
+      endMinute: 60,
+      dayOffset: 1,
+    });
   });
 });

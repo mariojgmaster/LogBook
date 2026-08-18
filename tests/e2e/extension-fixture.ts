@@ -26,7 +26,7 @@ export const test = base.extend<ExtensionFixtures>({
   },
   page: async ({ context, extensionId }, use) => {
     const page = await context.newPage();
-    await page.goto(`chrome-extension://${extensionId}/index.html`);
+    await page.goto(`chrome-extension://${extensionId}/sidepanel.html`);
     await use(page);
     await page.close();
   },

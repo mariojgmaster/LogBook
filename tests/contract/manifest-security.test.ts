@@ -7,10 +7,13 @@ describe('manifest security', () => {
     expect(manifest.minimum_chrome_version).toBe('120');
     expect(manifest.background).toEqual({ service_worker: 'service-worker.js', type: 'module' });
   });
-  it('keeps permissions minimal and alarms optional', () => {
-    expect(manifest.permissions).toEqual(['storage']);
+  it('keeps offscreen local and only alarms optional', () => {
+    expect(manifest.permissions).toEqual(['storage', 'sidePanel', 'offscreen']);
     expect(manifest.optional_permissions).toEqual(['alarms']);
     expect(manifest.host_permissions).toBeUndefined();
+    expect([...manifest.permissions, ...manifest.optional_permissions]).not.toEqual(
+      expect.arrayContaining(['clipboardRead', 'clipboardWrite', 'tabs', 'activeTab']),
+    );
   });
   it('forbids remote scripts and toolbar popup', () => {
     expect(manifest.content_security_policy.extension_pages).toBe(

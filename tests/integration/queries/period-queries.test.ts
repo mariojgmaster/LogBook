@@ -30,4 +30,21 @@ describe('period queries', () => {
     expect(page.items).toHaveLength(1);
     expect(page.items[0]?.projectId).toBe(p1);
   });
+
+  it('includes a cross-midnight record once when querying its second day', async () => {
+    const records = new IndexedDbLogRecordRepository();
+    const overnight = LogRecord.create({
+      id: crypto.randomUUID(),
+      projectId: crypto.randomUUID(),
+      localDate: '2026-08-16',
+      startMinute: 1380,
+      endLocalDate: '2026-08-17',
+      endMinute: 60,
+      details: 'Plantão noturno',
+      now: new Date(2026, 7, 17, 12),
+    });
+    await records.add(overnight);
+    const page = await new IndexedDbRecordQueryRepository().list('2026-08-17', '2026-08-17');
+    expect(page.items.map((item) => item.id)).toEqual([overnight.props.id]);
+  });
 });

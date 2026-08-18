@@ -13,6 +13,40 @@ describe('LogRecord', () => {
     expect(LogRecord.create({ ...base, endMinute: 600 }).props.durationMinutes).toBe(120);
     expect(LogRecord.create({ ...base, durationMinutes: 120 }).props.endMinute).toBe(600);
   });
+  it('keeps the full end time while deducting lunch from accountable duration', () => {
+    const withLunch = LogRecord.create({
+      ...base,
+      startMinute: 660,
+      durationMinutes: 360,
+      withoutLunchBreak: false,
+    });
+    expect(withLunch.props).toMatchObject({
+      endMinute: 1080,
+      durationMinutes: 360,
+      withoutLunchBreak: false,
+    });
+
+    const withoutLunch = LogRecord.create({
+      ...base,
+      startMinute: 660,
+      durationMinutes: 420,
+      withoutLunchBreak: true,
+    });
+    expect(withoutLunch.props).toMatchObject({
+      endMinute: 1080,
+      durationMinutes: 420,
+      withoutLunchBreak: true,
+    });
+
+    expect(
+      LogRecord.create({
+        ...base,
+        startMinute: 660,
+        endMinute: 1080,
+        withoutLunchBreak: false,
+      }).props.durationMinutes,
+    ).toBe(360);
+  });
   it('requires 1–2000 details and exactly one ending mode', () => {
     expect(() => LogRecord.create({ ...base, details: '', endMinute: 600 })).toThrow();
     expect(() => LogRecord.create({ ...base, endMinute: 600, durationMinutes: 120 })).toThrow();
