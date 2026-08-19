@@ -23,7 +23,7 @@ import { ReconcileReminders } from '@/application/use-cases/reminders/reconcile-
 import { SnoozeReminder } from '@/application/use-cases/reminders/snooze-reminder';
 import { AppError } from '@/domain/errors/app-error';
 import type { LogRecord, LogRecordProps } from '@/domain/entities/log-record';
-import type { Project, ProjectProps } from '@/domain/entities/project';
+import { Project, type ProjectProps } from '@/domain/entities/project';
 import type {
   ReminderOccurrence,
   ReminderScheduleProps,
@@ -49,6 +49,19 @@ class Projects implements ProjectRepository {
     const current = this.values.get(project.props.id);
     if (current?.revision !== expectedRevision) throw new AppError('CONFLICT');
     this.values.set(project.props.id, project.props);
+    return Promise.resolve();
+  }
+  restoreArchived(id: string, expectedRevision: number, now: Date) {
+    const current = this.values.get(id);
+    if (!current || current.revision !== expectedRevision) throw new AppError('CONFLICT');
+    const restored = Project.restore(current).restore(now).props;
+    this.values.set(id, restored);
+    return Promise.resolve(restored);
+  }
+  removeArchived(id: string, expectedRevision: number) {
+    const current = this.values.get(id);
+    if (!current || current.revision !== expectedRevision) throw new AppError('CONFLICT');
+    this.values.delete(id);
     return Promise.resolve();
   }
 }
@@ -85,7 +98,12 @@ class Records implements RecordRepository {
   }
 }
 class Settings implements SettingsRepository {
-  user: UserSettingsProps = { revision: 1, updatedAt: new Date(0).toISOString() };
+  user: UserSettingsProps = {
+    monthViewMode: 'notice',
+    reminderSoundId: 'gentle-bell',
+    revision: 1,
+    updatedAt: new Date(0).toISOString(),
+  };
   reminder: ReminderScheduleProps = {
     enabled: false,
     weekdays: [1, 2, 3, 4, 5],
@@ -191,6 +209,7 @@ describe('application use cases', () => {
     const records = new Records();
     const holidays: HolidayProvider = {
       isHoliday: () => false,
+      listApplicable: () => [],
       getCoverage: () => ({ minYear: 2021, maxYear: 2028, revision: '1' }),
       setRegion: () => Promise.resolve(),
     };
@@ -209,6 +228,7 @@ describe('application use cases', () => {
     const regions: any[] = [];
     const holidays: HolidayProvider = {
       isHoliday: () => false,
+      listApplicable: () => [],
       getCoverage: () => undefined,
       setRegion: (region) => {
         regions.push(region);

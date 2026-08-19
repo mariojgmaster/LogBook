@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   App as AntApp,
@@ -6,12 +6,30 @@ import {
   Card,
   Checkbox,
   Form,
-  InputNumber,
+  Input,
   Select,
   Switch,
+  Radio,
+  Space,
+  Typography,
 } from 'antd';
 import type { ReminderScheduleProps } from '@/domain/entities/reminder-schedule';
 import { sendAppMessage } from '@/infrastructure/chrome/message-client';
+import {
+  BrowserAudioPreviewAdapter,
+  type AudioPreviewAdapter,
+} from '@/infrastructure/browser/audio-preview-adapter';
+import { REMINDER_SOUNDS } from '@/shared/reminder-sounds';
+import { useFormDraft } from '@/ui/hooks/useFormDraft';
+import type { FormDraftSnapshot } from '@/application/ports/repositories';
+import {
+  formatDurationClock,
+  parseDurationClock,
+} from '@/application/services/duration-clock-codec';
+
+type ReminderFormValues = Omit<ReminderScheduleProps, 'snoozeMinutes'> & {
+  snoozeTime: string;
+};
 
 const weekdayOptions = [
   { label: 'Dom', value: 0 },
@@ -24,23 +42,56 @@ const weekdayOptions = [
 ];
 export function ReminderSettings({
   reminders,
+  reminderSoundId,
+  settingsRevision,
   permission,
   nextOccurrence,
   onSaved,
   onDirtyChange,
 }: {
   reminders: ReminderScheduleProps;
+  reminderSoundId: string;
+  settingsRevision: number;
   permission: boolean;
   nextOccurrence?: { when: number; targetLocalDate: string };
   onSaved: () => Promise<void>;
   onDirtyChange: (dirty: boolean) => void;
 }) {
   const { message } = AntApp.useApp();
-  const [form] = Form.useForm<ReminderScheduleProps>();
+  const [form] = Form.useForm<ReminderFormValues>();
   const [saving, setSaving] = useState(false);
+  const draftContext = useMemo(
+    () => ({
+      id: 'sidepanel:settings:reminders',
+      surface: 'sidepanel' as const,
+      formKind: 'settings' as const,
+      intent: 'update' as const,
+      contextKey: 'reminders',
+    }),
+    [],
+  );
+  const draft = useFormDraft<FormDraftSnapshot>({
+    initial: draftContext,
+    onRestore: (snapshot) => {
+      if (snapshot.values.formKind === 'settings' && snapshot.values.section === 'reminders') {
+        const fields = snapshot.values.fields;
+        form.setFieldsValue({
+          ...(fields as unknown as Partial<ReminderFormValues>),
+          ...(typeof fields.snoozeTime === 'string'
+            ? { snoozeTime: fields.snoozeTime }
+            : typeof fields.snoozeHours === 'string'
+              ? { snoozeTime: formatDurationClock(parseLegacyHours(fields.snoozeHours)) }
+              : {}),
+        });
+      }
+    },
+  });
   const enabled = Form.useWatch('enabled', form);
   useEffect(() => {
-    form.setFieldsValue(reminders);
+    form.setFieldsValue({
+      ...reminders,
+      snoozeTime: formatDurationClock(reminders.snoozeMinutes),
+    });
   }, [form, reminders]);
   const save = async () => {
     const values = await form.validateFields();
@@ -56,11 +107,12 @@ export function ReminderSettings({
           enabled: values.enabled,
           weekdays: values.weekdays,
           times: values.times,
-          snoozeMinutes: values.snoozeMinutes,
+          snoozeMinutes: parseDurationClock(values.snoozeTime, 2880),
           expectedRevision: reminders.revision,
         },
       });
       onDirtyChange(false);
+      await draft.complete();
       await onSaved();
     } catch (cause) {
       message.error(
@@ -72,7 +124,16 @@ export function ReminderSettings({
   };
   return (
     <Card title="Lembretes">
-      <Form form={form} layout="vertical" onValuesChange={() => onDirtyChange(true)}>
+      <Form
+        form={form}
+        layout="vertical"
+        onValuesChange={(_, values) => {
+          onDirtyChange(true);
+          const fields = { ...values };
+          Reflect.deleteProperty(fields, 'revision');
+          draft.protect({ formKind: 'settings', section: 'reminders', fields });
+        }}
+      >
         {!permission && enabled && (
           <Alert
             type="warning"
@@ -123,19 +184,157 @@ export function ReminderSettings({
           <Select mode="tags" tokenSeparators={[',', ' ']} placeholder="17:30" />
         </Form.Item>
         <Form.Item
-          name="snoozeMinutes"
-          label="Adiamento padrão (minutos)"
+          name="snoozeTime"
+          label="Adiamento padrão"
           rules={[
             { required: true },
-            { type: 'number', min: 1, max: 2880, message: 'Use de 1 minuto a 48 horas.' },
+            {
+              validator: (_, value?: string) => {
+                if (!value) return Promise.resolve();
+                try {
+                  parseDurationClock(value, 2880);
+                  return Promise.resolve();
+                } catch {
+                  return Promise.reject(
+                    new Error('Informe o adiamento no formato HH:mm, entre 00:01 e 48:00.'),
+                  );
+                }
+              },
+            },
           ]}
+          extra="Use HH:mm, de 00:01 a 48:00."
         >
-          <InputNumber style={{ width: '100%' }} />
+          <Input inputMode="numeric" autoComplete="off" placeholder="00:30" />
         </Form.Item>
         <Button type="primary" loading={saving} onClick={() => void save()}>
           Salvar lembretes
         </Button>
+        <Typography.Text role="status" type={draft.state === 'failed' ? 'danger' : 'secondary'}>
+          {draft.state === 'protecting'
+            ? 'Protegendo rascunho…'
+            : draft.state === 'failed'
+              ? 'Não foi possível proteger o rascunho'
+              : ''}
+        </Typography.Text>
       </Form>
+      <ReminderSoundPicker
+        soundId={reminderSoundId}
+        expectedRevision={settingsRevision}
+        onSaved={onSaved}
+      />
     </Card>
+  );
+}
+
+const parseLegacyHours = (value: string): number => {
+  const normalized = Number(value.replace(',', '.'));
+  if (!Number.isFinite(normalized)) return 10;
+  return Math.min(2_880, Math.max(1, Math.round(normalized * 60)));
+};
+
+const defaultPreview = new BrowserAudioPreviewAdapter();
+
+export function ReminderSoundPicker({
+  soundId,
+  expectedRevision,
+  onSaved,
+  preview = defaultPreview,
+}: {
+  soundId: string;
+  expectedRevision: number;
+  onSaved: () => Promise<void>;
+  preview?: AudioPreviewAdapter;
+}) {
+  const [selected, setSelected] = useState(soundId);
+  const [previewError, setPreviewError] = useState<string>();
+  const [savingSound, setSavingSound] = useState(false);
+  const soundDraftContext = useMemo(
+    () => ({
+      id: 'sidepanel:settings:reminder-sound',
+      surface: 'sidepanel' as const,
+      formKind: 'settings' as const,
+      intent: 'update' as const,
+      contextKey: 'reminder-sound',
+    }),
+    [],
+  );
+  const soundDraft = useFormDraft<FormDraftSnapshot>({
+    initial: soundDraftContext,
+    onRestore: (snapshot) => {
+      if (
+        snapshot.values.formKind === 'settings' &&
+        snapshot.values.section === 'reminder-sound' &&
+        typeof snapshot.values.fields.reminderSoundId === 'string'
+      ) {
+        setSelected(snapshot.values.fields.reminderSoundId);
+      }
+    },
+  });
+
+  const play = async (id: string) => {
+    setPreviewError(undefined);
+    try {
+      await preview.preview(id);
+    } catch {
+      setPreviewError(id);
+    }
+  };
+  const saveSound = async () => {
+    setSavingSound(true);
+    try {
+      await sendAppMessage({
+        type: 'settings.updateReminderSound',
+        payload: { soundId: selected as (typeof REMINDER_SOUNDS)[number]['id'], expectedRevision },
+      });
+      await soundDraft.complete();
+      await onSaved();
+    } finally {
+      setSavingSound(false);
+    }
+  };
+
+  return (
+    <section aria-labelledby="reminder-sound-heading" style={{ marginTop: 24 }}>
+      <Typography.Title level={5} id="reminder-sound-heading">
+        Som do lembrete
+      </Typography.Title>
+      <Radio.Group
+        value={selected}
+        onChange={(event) => {
+          const next = event.target.value as string;
+          setSelected(next);
+          soundDraft.protect({
+            formKind: 'settings',
+            section: 'reminder-sound',
+            fields: { reminderSoundId: next },
+          });
+        }}
+      >
+        <Space orientation="vertical">
+          {REMINDER_SOUNDS.map((sound) => (
+            <div key={sound.id} data-testid={`sound-${sound.id}`}>
+              <Radio value={sound.id}>{sound.label}</Radio>
+              <Button
+                type="link"
+                onClick={() => void play(sound.id)}
+                aria-label={`Ouvir ${sound.label}`}
+              >
+                Ouvir
+              </Button>
+              {previewError === sound.id && (
+                <Typography.Text type="danger" role="alert">
+                  Não foi possível reproduzir este som.
+                </Typography.Text>
+              )}
+            </div>
+          ))}
+        </Space>
+      </Radio.Group>
+      <div style={{ marginTop: 16 }}>
+        <Button type="primary" loading={savingSound} onClick={() => void saveSound()}>
+          Salvar som
+        </Button>
+      </div>
+    </section>
   );
 }

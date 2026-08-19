@@ -3,6 +3,7 @@ import { AppError } from '@/domain/errors/app-error';
 import type { SettingsRepository } from '@/application/ports/repositories';
 import type { ReminderScheduleProps } from '@/domain/entities/reminder-schedule';
 import type { UserSettingsProps } from '@/domain/entities/user-settings';
+import { REMINDER_SOUND_IDS } from '@/shared/contracts/messages';
 import { ChromeSettingsStore } from './settings-store';
 
 const userSettingsSchema: z.ZodType<UserSettingsProps> = z.object({
@@ -15,6 +16,8 @@ const userSettingsSchema: z.ZodType<UserSettingsProps> = z.object({
         .optional(),
     })
     .optional(),
+  monthViewMode: z.enum(['notice', 'eventRange']).catch('notice').default('notice'),
+  reminderSoundId: z.enum(REMINDER_SOUND_IDS).catch('gentle-bell').default('gentle-bell'),
   revision: z.number().int().positive(),
   updatedAt: z.string().datetime(),
 });
@@ -32,24 +35,36 @@ export class ChromeSettingsRepository implements SettingsRepository {
     private readonly now = () => new Date(),
   ) {}
   getUserSettings(): Promise<UserSettingsProps> {
-    return this.store.get('userSettings', userSettingsSchema, {
-      revision: 1,
-      updatedAt: this.now().toISOString(),
-    });
+    return this.store.get(
+      'settings.current',
+      userSettingsSchema,
+      {
+        monthViewMode: 'notice',
+        reminderSoundId: 'gentle-bell',
+        revision: 1,
+        updatedAt: this.now().toISOString(),
+      },
+      'userSettings',
+    );
   }
   async saveUserSettings(settings: UserSettingsProps, expectedRevision: number): Promise<void> {
     const current = await this.getUserSettings();
     if (current.revision !== expectedRevision) throw new AppError('CONFLICT');
-    await this.store.set('userSettings', userSettingsSchema.parse(settings));
+    await this.store.set('settings.current', userSettingsSchema.parse(settings));
   }
   getReminderSchedule(): Promise<ReminderScheduleProps> {
-    return this.store.get('reminderSchedule', reminderSchema, {
-      enabled: false,
-      weekdays: [1, 2, 3, 4, 5],
-      times: ['17:30'],
-      snoozeMinutes: 10,
-      revision: 1,
-    });
+    return this.store.get(
+      'reminder.schedule',
+      reminderSchema,
+      {
+        enabled: false,
+        weekdays: [1, 2, 3, 4, 5],
+        times: ['17:30'],
+        snoozeMinutes: 10,
+        revision: 1,
+      },
+      'reminderSchedule',
+    );
   }
   async saveReminderSchedule(
     schedule: ReminderScheduleProps,
@@ -57,6 +72,6 @@ export class ChromeSettingsRepository implements SettingsRepository {
   ): Promise<void> {
     const current = await this.getReminderSchedule();
     if (current.revision !== expectedRevision) throw new AppError('CONFLICT');
-    await this.store.set('reminderSchedule', reminderSchema.parse(schedule));
+    await this.store.set('reminder.schedule', reminderSchema.parse(schedule));
   }
 }

@@ -5,9 +5,9 @@ import type { ProjectProps } from '@/domain/entities/project';
 import { AppError } from '@/domain/errors/app-error';
 import { sendAppMessage } from '@/infrastructure/chrome/message-client';
 import { ErrorState, LoadingState } from '@/ui/components/AsyncState';
+import { useEntityChanges } from '@/ui/hooks/useEntityChanges';
 import { ProjectForm } from './ProjectForm';
 import { ProjectList } from './ProjectList';
-import { useEntityChanges } from '@/ui/hooks/useEntityChanges';
 
 export function ProjectsPage() {
   const { message, modal } = AntApp.useApp();
@@ -17,6 +17,8 @@ export function ProjectsPage() {
   const [view, setView] = useState<'active' | 'archived'>('active');
   const [editing, setEditing] = useState<ProjectProps | null>();
   const [saving, setSaving] = useState(false);
+  const [actionErrors, setActionErrors] = useState<Record<string, string>>({});
+
   const load = useCallback(async () => {
     try {
       const values = await sendAppMessage<ProjectProps[]>({
@@ -31,6 +33,7 @@ export function ProjectsPage() {
       setLoading(false);
     }
   }, []);
+
   useEntityChanges(() => {
     void load();
   });
@@ -38,15 +41,18 @@ export function ProjectsPage() {
     const timer = setTimeout(() => void load(), 0);
     return () => clearTimeout(timer);
   }, [load]);
+
   const save = async (name: string) => {
     setSaving(true);
     try {
-      if (editing)
+      if (editing) {
         await sendAppMessage({
           type: 'project.update',
           payload: { id: editing.id, name, expectedRevision: editing.revision },
         });
-      else await sendAppMessage({ type: 'project.create', payload: { name } });
+      } else {
+        await sendAppMessage({ type: 'project.create', payload: { name } });
+      }
       setEditing(undefined);
       message.success('Projeto salvo.');
       await load();
@@ -56,11 +62,11 @@ export function ProjectsPage() {
       setSaving(false);
     }
   };
+
   const archive = (project: ProjectProps) => {
     modal.confirm({
       title: `Arquivar “${project.name}”?`,
-      content:
-        'O projeto continuará visível no histórico, mas não poderá receber novos registros nem ser reativado nesta versão.',
+      content: 'O projeto continuará visível no histórico e poderá ser restaurado depois.',
       okText: 'Arquivar',
       okButtonProps: { danger: true },
       cancelText: 'Cancelar',
@@ -74,6 +80,61 @@ export function ProjectsPage() {
       },
     });
   };
+
+  const focusProject = (projectId: string) => {
+    setTimeout(() => {
+      const card = document.getElementById(`project-card-${projectId}`);
+      card?.focus();
+      card?.scrollIntoView({ block: 'nearest' });
+    }, 0);
+  };
+
+  const reportProjectActionError = (project: ProjectProps, cause: unknown) => {
+    setActionErrors((current) => ({
+      ...current,
+      [project.id]: AppError.fromUnknown(cause).message,
+    }));
+    focusProject(project.id);
+  };
+
+  const restore = async (project: ProjectProps) => {
+    setActionErrors((current) => ({ ...current, [project.id]: '' }));
+    try {
+      await sendAppMessage({
+        type: 'project.restore',
+        payload: { id: project.id, expectedRevision: project.revision },
+      });
+      message.success('Projeto restaurado.');
+      await load();
+    } catch (cause) {
+      reportProjectActionError(project, cause);
+    }
+  };
+
+  const remove = (project: ProjectProps) => {
+    modal.confirm({
+      title: `Remover “${project.name}”?`,
+      content:
+        'Esta ação é irreversível. O projeto só será removido se não possuir registros vinculados.',
+      okText: 'Remover definitivamente',
+      okButtonProps: { danger: true },
+      cancelText: 'Cancelar',
+      onOk: async () => {
+        setActionErrors((current) => ({ ...current, [project.id]: '' }));
+        try {
+          await sendAppMessage({
+            type: 'project.remove',
+            payload: { id: project.id, expectedRevision: project.revision },
+          });
+          message.success('Projeto removido definitivamente.');
+          await load();
+        } catch (cause) {
+          reportProjectActionError(project, cause);
+        }
+      },
+    });
+  };
+
   return (
     <section aria-labelledby="projects-heading">
       <div className="page-heading">
@@ -103,7 +164,10 @@ export function ProjectsPage() {
           projects={projects.filter((project) => project.status === view)}
           onEdit={setEditing}
           onArchive={archive}
+          onRestore={(project) => void restore(project)}
+          onRemove={remove}
           onCreate={() => setEditing(null)}
+          actionErrors={actionErrors}
         />
       )}
       <ProjectForm

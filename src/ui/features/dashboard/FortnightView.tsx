@@ -1,4 +1,4 @@
-import { Card } from 'antd';
+import { Card, Typography } from 'antd';
 import type { LogRecordProps } from '@/domain/entities/log-record';
 import type { ProjectProps } from '@/domain/entities/project';
 import type { Period } from '@/domain/value-objects/period';
@@ -26,24 +26,33 @@ export function FortnightView({
   }
   return (
     <div className="fortnight-grid">
-      {days.map((date) => (
-        <Card
-          key={date}
-          title={new Intl.DateTimeFormat('pt-BR', {
-            weekday: 'long',
-            day: '2-digit',
-            month: 'long',
-            timeZone: 'UTC',
-          }).format(new Date(`${date}T12:00:00Z`))}
-        >
-          <DailyView
-            records={records.filter((record) => record.localDate === date)}
-            projects={projects}
-            onOpen={onOpen}
-            onCreate={() => onCreate(date)}
-          />
-        </Card>
-      ))}
+      {days.map((date) => {
+        const dayRecords = records.filter((record) => record.localDate === date);
+        return (
+          <Card
+            key={date}
+            className={dayRecords.length === 0 ? 'fortnight-empty-day' : undefined}
+            size={dayRecords.length === 0 ? 'small' : 'medium'}
+            title={new Intl.DateTimeFormat('pt-BR', {
+              weekday: 'long',
+              day: '2-digit',
+              month: 'long',
+              timeZone: 'UTC',
+            }).format(new Date(`${date}T12:00:00Z`))}
+          >
+            {dayRecords.length === 0 ? (
+              <Typography.Text type="secondary">Sem registros</Typography.Text>
+            ) : (
+              <DailyView
+                records={dayRecords}
+                projects={projects}
+                onOpen={onOpen}
+                onCreate={() => onCreate(date)}
+              />
+            )}
+          </Card>
+        );
+      })}
     </div>
   );
 }

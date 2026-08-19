@@ -1,0 +1,296 @@
+.month-calendar {
+  --month-cell-block-size: 9rem;
+  container-type: inline-size;
+  min-width: 0;
+}
+
+.notice-calendar--wide,
+.event-range-days,
+.event-range-items {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.notice-calendar--narrow,
+.event-range-agenda {
+  display: grid;
+  gap: 12px;
+}
+
+.month-day,
+.event-range-day {
+  position: relative;
+  min-width: 0;
+  block-size: var(--month-cell-block-size);
+  padding: 6px;
+  border: 1px solid #33434f;
+  border-radius: 8px;
+  background: #121a22;
+}
+
+.month-day-trigger {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: inherit;
+  cursor: pointer;
+}
+
+.month-day-trigger:disabled {
+  cursor: default;
+}
+
+.month-day:has(.month-day-trigger:not(:disabled):hover),
+.event-range-day:has(.month-day-trigger:not(:disabled):hover) {
+  border-color: #527063;
+  background: #152129;
+}
+
+.month-day-trigger:focus-visible {
+  outline: 3px solid #8ce9c7;
+  outline-offset: -3px;
+}
+
+.event-range-day {
+  min-block-size: var(--month-cell-block-size);
+  block-size: 100%;
+}
+
+.event-range-day > span,
+.event-range-day > .month-holidays {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.month-day {
+  display: flex;
+  flex-direction: column;
+}
+
+.month-day h3 {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 6px;
+  font-size: 0.8rem;
+  pointer-events: none;
+}
+
+.month-day-items {
+  position: relative;
+  display: grid;
+  min-height: 0;
+  flex: 1;
+  gap: 4px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  z-index: 1;
+}
+
+.month-holidays {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  margin-block-end: 4px;
+}
+
+.month-holiday {
+  display: grid;
+  grid-template-columns: 0.4rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  color: #ffccc7;
+  font-size: 0.7rem;
+  line-height: 1rem;
+}
+
+.month-holiday > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.month-holiday-dot {
+  inline-size: 0.35rem;
+  block-size: 0.35rem;
+  background: #ff7875;
+  border-radius: 50%;
+}
+
+.event-range-holiday {
+  padding: 8px;
+  border: 1px solid #33434f;
+  border-radius: 8px;
+  background: #121a22;
+}
+
+.month-day-items:focus-visible {
+  outline: 3px solid #8ce9c7;
+  outline-offset: -3px;
+}
+
+.month-record {
+  display: grid;
+  min-width: 0;
+  min-height: 44px;
+  padding: 6px 8px;
+  overflow: hidden;
+  color: var(--project-text);
+  text-align: start;
+  overflow-wrap: anywhere;
+  background: var(--project-bg);
+  border: 1px solid var(--project-border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.month-record-label,
+.event-range-label,
+.event-range-record--card span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notice-calendar .month-record {
+  grid-template-columns: 0.5rem minmax(0, 1fr);
+  align-items: center;
+  column-gap: 0.5rem;
+  min-height: 30px;
+  padding: 2px 5px;
+  color: inherit;
+  background: transparent;
+  border-color: transparent;
+}
+
+.notice-calendar .month-record:hover {
+  background: color-mix(in srgb, var(--project-accent) 12%, transparent);
+}
+
+.month-record-dot {
+  inline-size: 0.45rem;
+  block-size: 0.45rem;
+  background: var(--project-accent);
+  border-radius: 50%;
+}
+
+.month-record-label {
+  display: block;
+}
+
+.month-record-time {
+  color: #b4c2cb;
+  font-variant-numeric: tabular-nums;
+}
+
+.event-range-calendar {
+  position: relative;
+}
+
+.event-range-days {
+  grid-auto-rows: var(--month-cell-block-size);
+}
+
+.event-range-items {
+  position: absolute;
+  inset: 0;
+  grid-auto-rows: var(--month-cell-block-size);
+  pointer-events: none;
+}
+
+.event-range-record {
+  align-self: start;
+  margin-inline: 2px;
+  pointer-events: auto;
+}
+
+.event-range-items .event-range-record {
+  margin-block-start: calc(2.6rem + var(--event-lane, 0) * 1.6rem);
+}
+
+.event-range-record--bar {
+  display: block;
+  min-height: 24px;
+  padding: 1px 2px;
+  color: inherit;
+  background: transparent;
+  border-color: transparent;
+  white-space: nowrap;
+}
+
+.event-range-label {
+  display: block;
+  padding: 1px 7px;
+  color: #07130f;
+  background: var(--project-accent);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  line-height: 1.2rem;
+}
+
+.event-range-record--bar:hover .event-range-label {
+  filter: brightness(1.08);
+}
+
+.month-record-tooltip {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 3px 9px;
+  max-inline-size: min(22rem, 70vw);
+  margin: 0;
+}
+
+.month-record-tooltip dt {
+  color: #b4c2cb;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.month-record-tooltip dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+@container (min-width: 480px) {
+  .month-calendar {
+    --month-cell-block-size: 10rem;
+  }
+}
+
+@media (forced-colors: active) {
+  .month-record {
+    border: 2px solid ButtonText;
+  }
+
+  .month-record-dot {
+    background: ButtonText;
+  }
+
+  .month-holiday {
+    color: ButtonText;
+  }
+
+  .month-holiday-dot {
+    background: ButtonFace;
+    border: 1px solid ButtonText;
+  }
+
+  .event-range-record--bar {
+    color: ButtonText;
+    background: ButtonFace;
+  }
+
+  .event-range-label {
+    color: ButtonText;
+    background: ButtonFace;
+    border: 2px solid ButtonText;
+  }
+}

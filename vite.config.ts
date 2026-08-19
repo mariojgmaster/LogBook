@@ -23,7 +23,10 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       input: {
-        app: path.resolve(import.meta.dirname, 'index.html'),
+        sidepanel: path.resolve(import.meta.dirname, 'sidepanel.html'),
+        reminder: path.resolve(import.meta.dirname, 'reminder.html'),
+        snooze: path.resolve(import.meta.dirname, 'snooze.html'),
+        audio: path.resolve(import.meta.dirname, 'audio.html'),
         'service-worker': path.resolve(import.meta.dirname, 'src/background/service-worker.ts'),
       },
       output: {

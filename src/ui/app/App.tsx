@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   BookOutlined,
   FolderOpenOutlined,
@@ -10,7 +10,8 @@ import { Button, Drawer, Layout, Menu, Typography } from 'antd';
 import { DiaryPage } from '@/ui/features/dashboard/DiaryPage';
 import { ProjectsPage } from '@/ui/features/projects/ProjectsPage';
 import { SettingsPage } from '@/ui/features/settings/SettingsPage';
-import { reminderOpenedEventSchema } from '@/shared/contracts/messages';
+import { ChromeSidePanelAdapter } from '@/infrastructure/chrome/side-panel-adapter';
+import { flushFormDrafts } from '@/ui/hooks/useFormDraft';
 
 type Destination = 'diary' | 'projects' | 'settings';
 const items = [
@@ -18,33 +19,22 @@ const items = [
   { key: 'projects', icon: <FolderOpenOutlined />, label: 'Projetos' },
   { key: 'settings', icon: <SettingOutlined />, label: 'Configurações' },
 ];
+const sidePanel = new ChromeSidePanelAdapter();
 
 export function App() {
-  const initialParams = new URLSearchParams(location.search);
-  const [destination, setDestination] = useState<Destination>(() =>
-    initialParams.has('reminder') ? 'settings' : 'diary',
-  );
-  const [reminderContext, setReminderContext] = useState(() => {
-    const targetLocalDate = initialParams.get('targetLocalDate');
-    const slotId = initialParams.get('slotId');
-    return targetLocalDate && slotId ? { targetLocalDate, slotId } : undefined;
-  });
+  const [destination, setDestination] = useState<Destination>('diary');
   const [menuOpen, setMenuOpen] = useState(false);
   const [newRecordSignal, setNewRecordSignal] = useState(0);
-  const navigate = (value: string) => {
-    setDestination(value as Destination);
+  const handleNewRecordSignal = useCallback(() => setNewRecordSignal(0), []);
+  const navigate = async (value: string) => {
+    await flushFormDrafts();
+    const next = value as Destination;
+    setDestination(next);
+    void sidePanel.saveDestination(next);
     setMenuOpen(false);
   };
   useEffect(() => {
-    const listener = (raw: unknown) => {
-      const event = reminderOpenedEventSchema.safeParse(raw);
-      if (event.success) {
-        setReminderContext(event.data);
-        setDestination('settings');
-      }
-    };
-    chrome.runtime.onMessage.addListener(listener);
-    return () => chrome.runtime.onMessage.removeListener(listener);
+    void sidePanel.getDestination().then(setDestination);
   }, []);
   return (
     <Layout className="app-shell">
@@ -61,9 +51,13 @@ export function App() {
           onClick={() => setMenuOpen(true)}
         />
         <div className="app-brand">
-          <span className="app-brand-mark" aria-hidden="true">
-            <BookOutlined />
-          </span>
+          <img
+            className="app-brand-mark"
+            src="/icons/logbook-128.png"
+            alt=""
+            width={36}
+            height={36}
+          />
           <span>LogBook</span>
         </div>
         <Menu
@@ -72,15 +66,17 @@ export function App() {
           mode="horizontal"
           selectedKeys={[destination]}
           items={items}
-          onClick={({ key }) => navigate(key)}
+          onClick={({ key }) => void navigate(key)}
           style={{ flex: 1, minWidth: 0 }}
         />
         <Button
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => {
-            setDestination('diary');
-            setNewRecordSignal((value) => value + 1);
+            void flushFormDrafts().then(() => {
+              setDestination('diary');
+              setNewRecordSignal((value) => value + 1);
+            });
           }}
         >
           <span className="desktop-only">Novo registro</span>
@@ -97,13 +93,18 @@ export function App() {
           mode="inline"
           selectedKeys={[destination]}
           items={items}
-          onClick={({ key }) => navigate(key)}
+          onClick={({ key }) => void navigate(key)}
         />
       </Drawer>
       <Layout.Content id="main-content" className="app-content">
-        {destination === 'diary' && <DiaryPage newRecordSignal={newRecordSignal} />}
+        {destination === 'diary' && (
+          <DiaryPage
+            newRecordSignal={newRecordSignal}
+            onNewRecordSignalHandled={handleNewRecordSignal}
+          />
+        )}
         {destination === 'projects' && <ProjectsPage />}
-        {destination === 'settings' && <SettingsPage reminderContext={reminderContext} />}
+        {destination === 'settings' && <SettingsPage />}
       </Layout.Content>
       <Typography.Text
         aria-live="polite"

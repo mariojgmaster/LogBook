@@ -9,7 +9,7 @@ test('switches day, fortnight and month while preserving filters', async ({ page
   await page.getByText('Quinzena', { exact: true }).click();
   await expect(page.getByRole('radiogroup', { name: 'Período' })).toContainText('Quinzena');
   await page.getByText('Mês', { exact: true }).click();
-  await expect(page.getByLabel('Calendário mensal')).toBeVisible();
+  await expect(page.getByLabel('Notice Calendar mensal')).toBeVisible();
   await page.getByText('Dia', { exact: true }).click();
   await expect(page.getByLabel('Buscar nos detalhes')).toHaveValue('busca');
 });

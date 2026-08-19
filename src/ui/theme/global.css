@@ -42,6 +42,16 @@ select {
 .app-shell {
   min-height: 100dvh;
 }
+.reminder-shell {
+  min-height: 100dvh;
+}
+.draft-status {
+  display: block;
+  min-height: 1.5rem;
+  margin-block-start: 8px;
+  color: #b4c2cb;
+  font-size: 0.875rem;
+}
 .app-header {
   position: sticky;
   top: 0;
@@ -60,13 +70,11 @@ select {
   white-space: nowrap;
 }
 .app-brand-mark {
-  display: grid;
-  place-items: center;
+  display: block;
+  flex: none;
   width: 36px;
   height: 36px;
-  color: #07130f;
-  background: #65d6ad;
-  border-radius: 10px;
+  object-fit: contain;
 }
 .app-content {
   width: min(100%, 1440px);
@@ -101,6 +109,11 @@ select {
   display: grid;
   gap: 12px;
 }
+.project-list {
+  display: grid;
+  gap: 12px;
+  margin-block-start: 16px;
+}
 .record-card {
   container-type: inline-size;
   border: 1px solid #33434f;
@@ -110,6 +123,23 @@ select {
   grid-template-columns: minmax(9rem, 1fr) 7rem 7rem auto;
   align-items: center;
   gap: 14px;
+}
+.record-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.record-actions .ant-btn {
+  min-width: 44px;
+  min-height: 44px;
+}
+.copy-feedback {
+  display: block;
+  min-height: 1.5rem;
+  margin-block: 8px;
+}
+.copy-feedback[role='alert'] {
+  color: #ffb4ab;
 }
 .muted {
   color: #b4c2cb;
@@ -143,6 +173,12 @@ select {
   display: grid;
   gap: 12px;
 }
+.fortnight-empty-day .ant-card-head {
+  min-height: 40px;
+}
+.fortnight-empty-day .ant-card-body {
+  padding-block: 10px;
+}
 .settings-stack {
   display: grid;
   gap: 20px;
@@ -153,6 +189,29 @@ select {
   margin-block-start: 4px;
   color: #b4c2cb;
   font-size: 0.875rem;
+}
+.record-lunch-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 44px;
+  margin-block-end: 24px;
+  padding: 7px 12px;
+  background: #101820;
+  border: 1px solid #33434f;
+  border-radius: 10px;
+}
+.record-lunch-toggle > div {
+  display: grid;
+  min-width: 0;
+}
+.record-lunch-toggle .ant-typography-secondary {
+  font-size: 0.78rem;
+}
+.calculated-end {
+  display: block;
+  margin-block-start: 5px;
 }
 .danger-text {
   color: #ffb4ab;

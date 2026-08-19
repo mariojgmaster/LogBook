@@ -3,7 +3,9 @@ import { vi } from 'vitest';
 export function createChromeMock() {
   const storage = new Map<string, unknown>();
   const alarms = new Map<string, chrome.alarms.Alarm>();
-  let alarmsPermission = true;
+  const grantedPermissions = new Set<string>(['alarms', 'offscreen']);
+  const windows = new Map<number, chrome.windows.Window>();
+  let nextWindowId = 1;
   const event = <T extends (...args: never[]) => unknown>() => {
     const listeners = new Set<T>();
     return {
@@ -18,6 +20,7 @@ export function createChromeMock() {
     runtime: {
       id: 'test-extension',
       getURL: (path: string) => `chrome-extension://test-extension/${path}`,
+      getContexts: vi.fn(async () => []),
       sendMessage: vi.fn(),
       onMessage: event(),
       onInstalled: event(),
@@ -38,12 +41,23 @@ export function createChromeMock() {
       },
     },
     permissions: {
-      contains: vi.fn(async () => alarmsPermission),
-      request: vi.fn(async () => alarmsPermission),
+      contains: vi.fn(async ({ permissions = [] }: chrome.permissions.Permissions) =>
+        permissions.every((permission) => grantedPermissions.has(permission)),
+      ),
+      request: vi.fn(async ({ permissions = [] }: chrome.permissions.Permissions) => {
+        permissions.forEach((permission) => grantedPermissions.add(permission));
+        return true;
+      }),
+      remove: vi.fn(async ({ permissions = [] }: chrome.permissions.Permissions) =>
+        permissions.some((permission) => grantedPermissions.delete(permission)),
+      ),
       onAdded: event(),
       onRemoved: event(),
       setAllowed: (value: boolean) => {
-        alarmsPermission = value;
+        for (const permission of ['alarms', 'offscreen']) {
+          if (value) grantedPermissions.add(permission);
+          else grantedPermissions.delete(permission);
+        }
       },
     },
     alarms: {
@@ -55,13 +69,76 @@ export function createChromeMock() {
       onAlarm: event(),
     },
     action: { onClicked: event() },
+    sidePanel: {
+      setPanelBehavior: vi.fn(async () => undefined),
+      setOptions: vi.fn(async () => undefined),
+      open: vi.fn(async () => undefined),
+      getOptions: vi.fn(async () => ({ enabled: true, path: 'sidepanel.html' })),
+    },
+    offscreen: {
+      Reason: { AUDIO_PLAYBACK: 'AUDIO_PLAYBACK' },
+      createDocument: vi.fn(async () => undefined),
+      closeDocument: vi.fn(async () => undefined),
+      hasDocument: vi.fn(async () => false),
+    },
     windows: {
       onRemoved: event(),
-      get: vi.fn(),
-      update: vi.fn(),
-      create: vi.fn(async () => ({ id: 1 })),
+      getCurrent: vi.fn(async () => ({
+        id: 99,
+        type: 'popup',
+        focused: true,
+        left: 200,
+        top: 100,
+        width: 500,
+        height: 220,
+      })),
+      get: vi.fn(async (id: number) => {
+        const found = windows.get(id);
+        if (!found) throw new Error('Window not found');
+        return found;
+      }),
+      update: vi.fn(async (id: number, updateInfo: chrome.windows.UpdateInfo) => {
+        const current = windows.get(id);
+        if (!current) throw new Error('Window not found');
+        const updated = { ...current, ...updateInfo };
+        windows.set(id, updated);
+        return updated;
+      }),
+      create: vi.fn(async (createData: chrome.windows.CreateData) => {
+        const rawUrl = Array.isArray(createData.url) ? createData.url[0] : createData.url;
+        const created = {
+          id: nextWindowId++,
+          type: createData.type ?? 'normal',
+          focused: true,
+          tabs: rawUrl ? [{ id: 1, url: rawUrl }] : [],
+        };
+        windows.set(created.id, created as chrome.windows.Window);
+        return created;
+      }),
+      remove: vi.fn(async (id: number) => {
+        windows.delete(id);
+      }),
     },
     __storage: storage,
     __alarms: alarms,
+    __permissions: grantedPermissions,
+    __windows: windows,
+  };
+}
+
+export function installClipboardMock() {
+  const clipboard = { writeText: vi.fn(async () => undefined) };
+  Object.defineProperty(navigator, 'clipboard', { configurable: true, value: clipboard });
+  return clipboard;
+}
+
+export function createAudioMock() {
+  return {
+    src: '',
+    currentTime: 0,
+    play: vi.fn(async () => undefined),
+    pause: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
   };
 }

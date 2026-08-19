@@ -4,9 +4,22 @@
   "description": "Diário de bordo local com horas por projeto e lembretes.",
   "version": "0.1.0",
   "minimum_chrome_version": "120",
-  "permissions": ["storage"],
+  "icons": {
+    "16": "icons/logbook-16.png",
+    "32": "icons/logbook-32.png",
+    "48": "icons/logbook-48.png",
+    "128": "icons/logbook-128.png"
+  },
+  "permissions": ["storage", "sidePanel", "offscreen"],
   "optional_permissions": ["alarms"],
-  "action": { "default_title": "Abrir LogBook" },
+  "action": {
+    "default_title": "Abrir LogBook",
+    "default_icon": {
+      "16": "icons/logbook-16.png",
+      "32": "icons/logbook-32.png"
+    }
+  },
+  "side_panel": { "default_path": "sidepanel.html" },
   "background": { "service_worker": "service-worker.js", "type": "module" },
   "content_security_policy": { "extension_pages": "script-src 'self'; object-src 'none';" }
 }

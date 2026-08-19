@@ -11,6 +11,7 @@ describe('settings page sections', () => {
       </ConfigProvider>,
     );
     expect(screen.getByText('8 horas por dia')).toBeVisible();
+    expect(screen.getByText('08:00–17:00')).toBeVisible();
     expect(screen.getByText('Extra 100%')).toBeVisible();
   });
 });

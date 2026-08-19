@@ -16,13 +16,18 @@ export async function seedProject(page: Page, name = 'Projeto E2E') {
   });
 }
 
-export async function seedRecord(page: Page, projectId: string, details = 'Atividade E2E') {
+export async function seedRecord(
+  page: Page,
+  projectId: string,
+  details = 'Atividade E2E',
+  durationMinutes = 60,
+) {
   const localDate = await page.evaluate(() => {
     const date = new Date();
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   });
   return send<{ id: string; revision: number; localDate: string }>(page, {
     type: 'record.create',
-    payload: { projectId, localDate, startMinute: 0, endMinute: 60, details },
+    payload: { projectId, localDate, startMinute: 0, durationMinutes, details },
   });
 }

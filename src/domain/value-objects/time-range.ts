@@ -22,33 +22,33 @@ export const formatClockTime = (minute: number): string => {
 export class TimeRange {
   readonly startMinute: number;
   readonly endMinute: number;
+  readonly dayOffset: 0 | 1;
   readonly durationMinutes: number;
 
-  private constructor(startMinute: number, endMinute: number) {
+  private constructor(startMinute: number, endMinute: number, dayOffset: 0 | 1) {
     this.startMinute = startMinute;
     this.endMinute = endMinute;
-    this.durationMinutes = endMinute - startMinute;
+    this.dayOffset = dayOffset;
+    this.durationMinutes = dayOffset * 1440 + endMinute - startMinute;
   }
 
-  static fromEnd(startMinute: number, endMinute: number): TimeRange {
+  static fromEnd(startMinute: number, endMinute: number, dayOffset: 0 | 1 = 0): TimeRange {
     validateMinute(startMinute, 0, 1439, 'startTime');
-    validateMinute(endMinute, 1, 1440, 'endTime');
-    if (endMinute <= startMinute) {
-      throw new AppError('VALIDATION', {
-        endTime: 'O fim deve ser posterior ao início no mesmo dia.',
-      });
+    if (endMinute === 1440 && dayOffset === 0) return new TimeRange(startMinute, 0, 1);
+    validateMinute(endMinute, dayOffset === 0 ? 1 : 0, 1439, 'endTime');
+    const duration = dayOffset * 1440 + endMinute - startMinute;
+    if (duration < 1 || duration > 1440) {
+      throw new AppError('VALIDATION', { endTime: 'O intervalo deve durar até 24 horas.' });
     }
-    return new TimeRange(startMinute, endMinute);
+    return new TimeRange(startMinute, endMinute, dayOffset);
   }
 
   static fromDuration(startMinute: number, durationMinutes: number): TimeRange {
     validateMinute(startMinute, 0, 1439, 'startTime');
     validateMinute(durationMinutes, 1, 1440, 'durationMinutes');
-    const endMinute = startMinute + durationMinutes;
-    if (endMinute > 1440) {
-      throw new AppError('VALIDATION', { durationMinutes: 'A tarefa deve terminar no mesmo dia.' });
-    }
-    return new TimeRange(startMinute, endMinute);
+    const absoluteEnd = startMinute + durationMinutes;
+    const dayOffset = absoluteEnd >= 1440 ? 1 : 0;
+    return new TimeRange(startMinute, absoluteEnd % 1440, dayOffset);
   }
 }
 

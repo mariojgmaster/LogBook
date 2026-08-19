@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Card, Form, Select, Space, Typography } from 'antd';
 import type { Region, UserSettingsProps } from '@/domain/entities/user-settings';
 import { sendAppMessage } from '@/infrastructure/chrome/message-client';
 import { RegionChangeConfirmDialog } from './RegionChangeConfirmDialog';
+import { useFormDraft } from '@/ui/hooks/useFormDraft';
+import type { FormDraftSnapshot } from '@/application/ports/repositories';
 
 interface Municipality {
   code: string;
@@ -57,6 +59,24 @@ export function RegionSettings({
   const [municipalities, setMunicipalities] = useState<Municipality[]>([]);
   const [pending, setPending] = useState<Region>();
   const [saving, setSaving] = useState(false);
+  const draftContext = useMemo(
+    () => ({
+      id: 'sidepanel:settings:region',
+      surface: 'sidepanel' as const,
+      formKind: 'settings' as const,
+      intent: 'update' as const,
+      contextKey: 'region',
+    }),
+    [],
+  );
+  const draft = useFormDraft<FormDraftSnapshot>({
+    initial: draftContext,
+    onRestore: (snapshot) => {
+      if (snapshot.values.formKind === 'settings' && snapshot.values.section === 'region') {
+        form.setFieldsValue(snapshot.values.fields as unknown as Region);
+      }
+    },
+  });
   const uf = Form.useWatch('uf', form);
   useEffect(() => {
     const url = chrome.runtime?.getURL
@@ -83,6 +103,7 @@ export function RegionSettings({
       });
       setPending(undefined);
       onDirtyChange(false);
+      await draft.complete();
       await onSaved();
     } finally {
       setSaving(false);
@@ -101,7 +122,18 @@ export function RegionSettings({
         ) : (
           <Alert type="warning" showIcon message="Catálogo de feriados indisponível" />
         )}
-        <Form form={form} layout="vertical" onValuesChange={() => onDirtyChange(true)}>
+        <Form
+          form={form}
+          layout="vertical"
+          onValuesChange={(_, values) => {
+            onDirtyChange(true);
+            draft.protect({
+              formKind: 'settings',
+              section: 'region',
+              fields: values as unknown as Record<string, string | null>,
+            });
+          }}
+        >
           <Form.Item
             name="uf"
             label="Estado (UF)"
@@ -126,6 +158,13 @@ export function RegionSettings({
           <Button type="primary" onClick={() => void save()}>
             Salvar região
           </Button>
+          <Typography.Text role="status" type={draft.state === 'failed' ? 'danger' : 'secondary'}>
+            {draft.state === 'protecting'
+              ? 'Protegendo rascunho…'
+              : draft.state === 'failed'
+                ? 'Não foi possível proteger o rascunho'
+                : ''}
+          </Typography.Text>
         </Form>
         <Typography.Text type="secondary">
           O catálogo é local e atualizado somente junto com novas versões da extensão.

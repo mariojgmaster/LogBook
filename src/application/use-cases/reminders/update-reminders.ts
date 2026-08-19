@@ -1,4 +1,4 @@
-import type { AlarmPort, Clock } from '@/application/ports/platform';
+import type { AlarmPort, Clock, OptionalPermissionPort } from '@/application/ports/platform';
 import type { SettingsRepository } from '@/application/ports/repositories';
 import { AppError } from '@/domain/errors/app-error';
 import { ReminderSchedule, type ReminderScheduleProps } from '@/domain/entities/reminder-schedule';
@@ -8,6 +8,7 @@ export class UpdateReminders {
     private readonly settings: SettingsRepository,
     private readonly alarms: AlarmPort,
     private readonly clock: Clock,
+    private readonly permissions?: OptionalPermissionPort,
   ) {}
   async execute(
     input: Omit<ReminderScheduleProps, 'revision'>,
@@ -17,9 +18,14 @@ export class UpdateReminders {
     const current = await this.settings.getReminderSchedule();
     if (current.revision !== expectedRevision) throw new AppError('CONFLICT');
     const schedule = ReminderSchedule.create({ ...input, revision: current.revision + 1 });
-    if (schedule.props.enabled && !(await this.alarms.hasPermission())) {
-      if (!requestPermission || !(await this.alarms.requestPermission()))
-        throw new AppError('PERMISSION_DENIED');
+    const hasPermissions = this.permissions
+      ? await this.permissions.contains(['alarms'])
+      : await this.alarms.hasPermission();
+    if (schedule.props.enabled && !hasPermissions) {
+      const granted = this.permissions
+        ? requestPermission && (await this.permissions.ensure(['alarms']))
+        : requestPermission && (await this.alarms.requestPermission());
+      if (!granted) throw new AppError('PERMISSION_DENIED');
     }
     await this.clearManaged();
     if (schedule.props.enabled)

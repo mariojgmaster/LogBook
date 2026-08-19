@@ -12,11 +12,7 @@ export const handleRecordRequest = async (request: Request, root: CompositionRoo
   const value =
     request.type === 'record.create'
       ? await root.createRecord.execute(request.payload)
-      : await root.updateRecord.execute(
-          request.payload.id,
-          request.payload.expectedRevision,
-          request.payload.record,
-        );
+      : await root.updateRecord.execute(request.payload.id, request.payload.record);
   broadcastEntityChange('record', value.id, value.revision);
   return value;
 };

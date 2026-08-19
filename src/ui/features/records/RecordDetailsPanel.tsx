@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { CopyOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { App as AntApp, Button, Descriptions, Drawer, Space, Typography } from 'antd';
 import type { LogRecordProps } from '@/domain/entities/log-record';
 import type { ProjectProps } from '@/domain/entities/project';
@@ -23,6 +23,7 @@ export function RecordDetailsPanel({
 }) {
   const { modal, message } = AntApp.useApp();
   const [editing, setEditing] = useState(false);
+  const [cloning, setCloning] = useState(false);
   const [conflict, setConflict] = useState<{ draft: RecordDraft; current: LogRecordProps }>();
   const project = projects.find((item) => item.id === record?.projectId);
   const remove = () => {
@@ -69,7 +70,6 @@ export function RecordDetailsPanel({
         type: 'record.update',
         payload: {
           id: record.id,
-          expectedRevision: conflict.current.revision,
           record: conflict.draft,
         },
       });
@@ -92,6 +92,18 @@ export function RecordDetailsPanel({
         width="min(34rem, 100vw)"
         extra={
           <Space>
+            <Button
+              icon={<CopyOutlined />}
+              onClick={() => {
+                if (project?.status !== 'active') {
+                  message.warning('Restaure o projeto antes de clonar este registro.');
+                  return;
+                }
+                setCloning(true);
+              }}
+            >
+              Clonar
+            </Button>
             <Button icon={<EditOutlined />} onClick={() => setEditing(true)}>
               Editar
             </Button>
@@ -110,12 +122,19 @@ export function RecordDetailsPanel({
               <Descriptions.Item label="Data">
                 {record.localDate.split('-').reverse().join('/')}
               </Descriptions.Item>
-              <Descriptions.Item label="Horário">
-                {formatClockTime(record.startMinute)}–{formatClockTime(record.endMinute)}
+              <Descriptions.Item label="Tipo">
+                {record.isEvent ? 'Evento informativo' : 'Registro de trabalho'}
               </Descriptions.Item>
-              <Descriptions.Item label="Duração">
-                {formatMinutes(record.durationMinutes)}
-              </Descriptions.Item>
+              {!record.isEvent && (
+                <>
+                  <Descriptions.Item label="Horário">
+                    {formatClockTime(record.startMinute)}–{formatClockTime(record.endMinute)}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Duração">
+                    {formatMinutes(record.durationMinutes)}
+                  </Descriptions.Item>
+                </>
+              )}
             </Descriptions>
             <Typography.Title level={5}>Detalhes</Typography.Title>
             <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
@@ -137,6 +156,21 @@ export function RecordDetailsPanel({
             await onChanged();
           }}
           onConflict={onConflict}
+        />
+      )}
+      {record && (
+        <RecordForm
+          open={cloning}
+          template={record}
+          projects={projects}
+          initialDate={record.localDate}
+          onCancel={() => setCloning(false)}
+          onSaved={async () => {
+            setCloning(false);
+            onClose();
+            await onChanged();
+            message.success('Registro clonado.');
+          }}
         />
       )}
       {conflict && (
