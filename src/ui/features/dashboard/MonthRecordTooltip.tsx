@@ -20,7 +20,7 @@ export function MonthRecordTooltip({
         <dl className="month-record-tooltip">
           <dt>Projeto</dt>
           <dd>{projectName}</dd>
-          <dt>Período</dt>
+          <dt>{record.isEvent ? 'Data' : 'Período'}</dt>
           <dd>{formatRecordPeriod(record)}</dd>
           <dt>Descrição</dt>
           <dd>{record.details}</dd>
@@ -33,6 +33,7 @@ export function MonthRecordTooltip({
 }
 
 const formatRecordPeriod = (record: LogRecordProps) => {
+  if (record.isEvent) return formatDate(record.localDate);
   const endDate = record.endLocalDate ?? record.localDate;
   const start = `${formatDate(record.localDate)} ${formatClockTime(record.startMinute)}`;
   const end = `${formatDate(endDate)} ${formatClockTime(record.endMinute)}`;

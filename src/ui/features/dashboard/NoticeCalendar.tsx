@@ -91,7 +91,11 @@ export function NoticeCalendar({
                           '--project-accent': color.border,
                         } as CSSProperties
                       }
-                      aria-label={`${projectName}, ${formatClockTime(segment.startMinute)}–${formatClockTime(segment.endMinute)}, ${segment.details}`}
+                      aria-label={
+                        segment.isEvent
+                          ? `${projectName}, evento, ${segment.details}`
+                          : `${projectName}, ${formatClockTime(segment.startMinute)}–${formatClockTime(segment.endMinute)}, ${segment.details}`
+                      }
                       onClick={(event) => {
                         event.stopPropagation();
                         onOpenRecord(record);
@@ -100,8 +104,9 @@ export function NoticeCalendar({
                       <span className="month-record-dot" aria-hidden="true" />
                       <span className="month-record-label">
                         <span className="month-record-time">
-                          {formatClockTime(segment.startMinute)}–
-                          {formatClockTime(segment.endMinute)}
+                          {segment.isEvent
+                            ? 'Evento'
+                            : `${formatClockTime(segment.startMinute)}–${formatClockTime(segment.endMinute)}`}
                         </span>
                         <span aria-hidden="true"> · </span>
                         <strong>{projectName}</strong>

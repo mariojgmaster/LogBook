@@ -35,10 +35,11 @@ export class IndexedDbLogRecordRepository implements RecordRepository {
     );
     const periodStart = civilMinute(startDate.value, 0);
     const periodEnd = civilMinute(endDate.addDays(1).value, 0);
-    return values.filter(
-      (record) =>
-        civilMinute(record.endLocalDate ?? record.localDate, record.endMinute) > periodStart &&
-        civilMinute(record.localDate, record.startMinute) < periodEnd,
+    return values.filter((record) =>
+      record.isEvent
+        ? record.localDate >= startDate.value && record.localDate <= endDate.value
+        : civilMinute(record.endLocalDate ?? record.localDate, record.endMinute) > periodStart &&
+          civilMinute(record.localDate, record.startMinute) < periodEnd,
     );
   }
   async update(record: LogRecord, expectedRevision?: number): Promise<LogRecordProps> {
@@ -77,6 +78,7 @@ const restoreAndSortRecords = (records: LogRecordProps[]) =>
     .sort(
       (a, b) =>
         a.localDate.localeCompare(b.localDate) ||
+        Number(b.isEvent) - Number(a.isEvent) ||
         a.startMinute - b.startMinute ||
         a.createdAt.localeCompare(b.createdAt) ||
         a.id.localeCompare(b.id),

@@ -51,6 +51,24 @@ describe('LogRecord', () => {
     expect(() => LogRecord.create({ ...base, details: '', endMinute: 600 })).toThrow();
     expect(() => LogRecord.create({ ...base, endMinute: 600, durationMinutes: 120 })).toThrow();
   });
+  it('creates informational events without accountable time', () => {
+    const event = LogRecord.create({
+      id: base.id,
+      projectId: base.projectId,
+      localDate: base.localDate,
+      isEvent: true,
+      details: 'Reunião geral',
+      now: base.now,
+    });
+    expect(event.props).toMatchObject({
+      isEvent: true,
+      startMinute: 0,
+      endMinute: 0,
+      durationMinutes: 0,
+      endLocalDate: base.localDate,
+    });
+    expect(LogRecord.restore(event.props).props).toEqual(event.props);
+  });
   it('rejects future starts', () =>
     expect(() => LogRecord.create({ ...base, startMinute: 780, endMinute: 840 })).toThrow());
 });

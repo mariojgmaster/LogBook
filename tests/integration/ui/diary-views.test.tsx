@@ -43,4 +43,19 @@ describe('diary views', () => {
     expect(screen.getByText('Projeto')).toBeVisible();
     expect(screen.getByText('08:00–09:00')).toBeVisible();
   });
+  it('renders events without time or duration', () => {
+    render(
+      <ConfigProvider>
+        <DailyView
+          records={[{ ...record, isEvent: true, startMinute: 0, endMinute: 0, durationMinutes: 0 }]}
+          projects={[project]}
+          onOpen={vi.fn()}
+          onCreate={vi.fn()}
+        />
+      </ConfigProvider>,
+    );
+    expect(screen.getByText('Evento')).toBeVisible();
+    expect(screen.getByText('Informativo')).toBeVisible();
+    expect(screen.queryByText('00:00–00:00')).not.toBeInTheDocument();
+  });
 });

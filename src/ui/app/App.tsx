@@ -51,9 +51,13 @@ export function App() {
           onClick={() => setMenuOpen(true)}
         />
         <div className="app-brand">
-          <span className="app-brand-mark" aria-hidden="true">
-            <BookOutlined />
-          </span>
+          <img
+            className="app-brand-mark"
+            src="/icons/logbook-128.png"
+            alt=""
+            width={36}
+            height={36}
+          />
           <span>LogBook</span>
         </div>
         <Menu

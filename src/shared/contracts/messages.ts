@@ -8,18 +8,33 @@ const projectInput = strictObject({ name: z.string().trim().min(1).max(100) });
 const recordInput = strictObject({
   projectId: z.string().uuid(),
   localDate: z.iso.date(),
-  startMinute: z.number().int().min(0).max(1439),
+  isEvent: z.boolean().optional(),
+  startMinute: z.number().int().min(0).max(1439).optional(),
   endLocalDate: z.iso.date().optional(),
   endMinute: z.number().int().min(0).max(1439).optional(),
   durationMinutes: z.number().int().min(1).max(1440).optional(),
   withoutLunchBreak: z.boolean().optional(),
   details: z.string().trim().min(1).max(2000),
 }).superRefine((value, context) => {
+  if (value.isEvent) {
+    if (
+      value.startMinute !== undefined ||
+      value.endMinute !== undefined ||
+      value.endLocalDate !== undefined ||
+      value.durationMinutes !== undefined ||
+      value.withoutLunchBreak !== undefined
+    ) {
+      context.addIssue({ code: 'custom', message: 'Eventos não possuem horários ou duração.' });
+    }
+    return;
+  }
   const usesEnd = value.endMinute !== undefined || value.endLocalDate !== undefined;
   const valid =
-    value.durationMinutes !== undefined
+    value.startMinute !== undefined && value.durationMinutes !== undefined
       ? !usesEnd
-      : value.endMinute !== undefined && value.endLocalDate !== undefined;
+      : value.startMinute !== undefined &&
+        value.endMinute !== undefined &&
+        value.endLocalDate !== undefined;
   if (!valid) context.addIssue({ code: 'custom', message: 'Informe fim completo ou duração.' });
 });
 const periodInput = strictObject({
@@ -60,6 +75,7 @@ const draftContextSchema = strictObject({
 
 const recordDraftValues = strictObject({
   formKind: z.literal('record'),
+  isEvent: z.boolean().optional(),
   projectId: z.string().uuid().optional(),
   localDate: z.iso.date().optional(),
   startTime: z

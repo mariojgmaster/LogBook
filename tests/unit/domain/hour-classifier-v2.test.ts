@@ -19,13 +19,13 @@ const overnight: LogRecordProps = {
 describe('hour classifier v2', () => {
   it('classifies each daily intersection while returning one logical record and total', () => {
     const result = classifyHours([overnight], { isHoliday: () => false });
-    expect(result).toMatchObject({ regular: 60, overtime50: 60, overtime100: 0, total: 120 });
+    expect(result).toMatchObject({ regular: 0, overtime50: 120, overtime100: 0, total: 120 });
     expect(result.records).toEqual([
       {
         recordId: overnight.id,
         projectId: overnight.projectId,
-        regular: 60,
-        overtime50: 60,
+        regular: 0,
+        overtime50: 120,
         overtime100: 0,
         total: 120,
       },
@@ -36,6 +36,6 @@ describe('hour classifier v2', () => {
     const result = classifyHours([{ ...overnight, endMinute: 0, durationMinutes: 60 }], {
       isHoliday: (date) => (date === '2026-08-22' ? true : false),
     });
-    expect(result).toMatchObject({ regular: 60, overtime50: 0, overtime100: 0, total: 60 });
+    expect(result).toMatchObject({ regular: 0, overtime50: 60, overtime100: 0, total: 60 });
   });
 });

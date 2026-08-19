@@ -37,6 +37,29 @@ describe('v2 message contracts', () => {
     });
   });
 
+  it('accepts events without time and rejects event payloads with accountable duration', () => {
+    accepts({
+      type: 'record.create',
+      payload: {
+        projectId: id,
+        localDate: '2026-08-18',
+        isEvent: true,
+        details: 'Evento informativo',
+      },
+    });
+    rejects({
+      type: 'record.create',
+      payload: {
+        projectId: id,
+        localDate: '2026-08-18',
+        isEvent: true,
+        startMinute: 480,
+        durationMinutes: 60,
+        details: 'Evento inválido',
+      },
+    });
+  });
+
   it.each([
     buildRecordDraft({ values: { formKind: 'record', details: 'Parcial' } }),
     buildProjectDraft({ values: { formKind: 'project', name: 'Projeto' } }),

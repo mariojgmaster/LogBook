@@ -39,9 +39,9 @@ export function EventRangeCalendar({
             onOpenRecord={onOpenRecord}
           >
             <span>
-              {formatDate(record.localDate, 'narrow')} {formatClockTime(record.startMinute)} →{' '}
-              {formatDate(record.endLocalDate ?? record.localDate, 'narrow')}{' '}
-              {formatClockTime(record.endMinute)}
+              {record.isEvent
+                ? `${formatDate(record.localDate, 'narrow')} · Evento`
+                : `${formatDate(record.localDate, 'narrow')} ${formatClockTime(record.startMinute)} → ${formatDate(record.endLocalDate ?? record.localDate, 'narrow')} ${formatClockTime(record.endMinute)}`}
             </span>
           </RangeButton>
         ))}
@@ -145,7 +145,11 @@ function RangeButton({
           '--project-accent': color.border,
         } as CSSProperties
       }
-      aria-label={`${projectName}, ${formatClockTime(record.startMinute)}–${formatClockTime(record.endMinute)}, ${record.details}`}
+      aria-label={
+        record.isEvent
+          ? `${projectName}, evento, ${record.details}`
+          : `${projectName}, ${formatClockTime(record.startMinute)}–${formatClockTime(record.endMinute)}, ${record.details}`
+      }
       onClick={(event) => {
         event.stopPropagation();
         onOpenRecord(record);

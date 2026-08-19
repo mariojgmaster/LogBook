@@ -91,9 +91,69 @@ describe('duration hour forms', { timeout: 15_000 }, () => {
       </ConfigProvider>,
     );
     expect(screen.getByRole('switch', { name: 'Sem hora de almoço?' })).not.toBeChecked();
+    expect(screen.getByLabelText('Início')).toHaveValue('08:00');
+    expect(screen.getByLabelText('Fim')).toHaveValue('17:00');
     expect(
       screen.queryByText('Campo obrigatório. Não há campo de título.'),
     ).not.toBeInTheDocument();
+  });
+
+  it('submits an informational event without time fields', async () => {
+    const user = userEvent.setup();
+    render(
+      <ConfigProvider>
+        <App>
+          <RecordForm
+            open
+            projects={[project]}
+            template={record}
+            initialDate="2026-08-17"
+            onCancel={vi.fn()}
+            onSaved={vi.fn(async () => undefined)}
+          />
+        </App>
+      </ConfigProvider>,
+    );
+    await user.click(screen.getByRole('switch', { name: 'É evento?' }));
+    expect(screen.queryByLabelText('Início')).not.toBeInTheDocument();
+    await user.clear(screen.getByLabelText('Detalhes'));
+    await user.type(screen.getByLabelText('Detalhes'), 'Evento da equipe');
+    await user.click(screen.getByRole('button', { name: 'Salvar registro' }));
+    expect(chrome.runtime.sendMessage).toHaveBeenCalledWith({
+      type: 'record.create',
+      payload: {
+        projectId: project.id,
+        localDate: record.localDate,
+        isEvent: true,
+        details: 'Evento da equipe',
+      },
+    });
+  });
+
+  it('uses a template to clone as a new record', async () => {
+    const user = userEvent.setup();
+    render(
+      <ConfigProvider>
+        <App>
+          <RecordForm
+            open
+            projects={[project]}
+            template={record}
+            initialDate={record.localDate}
+            onCancel={vi.fn()}
+            onSaved={vi.fn(async () => undefined)}
+          />
+        </App>
+      </ConfigProvider>,
+    );
+    expect(screen.getByRole('dialog')).toHaveTextContent('Clonar registro');
+    await user.click(screen.getByRole('button', { name: 'Salvar registro' }));
+    expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'record.create' }),
+    );
+    expect(chrome.runtime.sendMessage).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'record.update' }),
+    );
   });
 
   it('keeps invalid hour text from reaching persistence', async () => {

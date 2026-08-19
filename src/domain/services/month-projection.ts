@@ -14,6 +14,7 @@ export interface MonthDaySegment {
   date: string;
   startMinute: number;
   endMinute: number;
+  isEvent: boolean;
 }
 
 export interface MonthRangeSegment {
@@ -67,6 +68,22 @@ const splitRecord = (
   periodStart: LocalDate,
   periodEnd: LocalDate,
 ): MonthDaySegment[] => {
+  if (record.isEvent) {
+    return record.localDate >= periodStart.value && record.localDate <= periodEnd.value
+      ? [
+          {
+            recordId: record.id,
+            logicalRecordId: record.id,
+            projectId: record.projectId,
+            details: record.details,
+            date: record.localDate,
+            startMinute: 0,
+            endMinute: 0,
+            isEvent: true,
+          },
+        ]
+      : [];
+  }
   const recordEnd = LocalDate.parse(record.endLocalDate ?? record.localDate);
   let cursor =
     record.localDate < periodStart.value ? periodStart : LocalDate.parse(record.localDate);
@@ -86,6 +103,7 @@ const splitRecord = (
         date: cursor.value,
         startMinute,
         endMinute,
+        isEvent: false,
       });
     }
     cursor = cursor.addDays(1);
@@ -125,6 +143,7 @@ const groupWeekly = (segments: readonly MonthDaySegment[]): MonthRangeSegment[] 
 
 const compareRecords = (left: LogRecordProps, right: LogRecordProps) =>
   left.localDate.localeCompare(right.localDate) ||
+  Number(right.isEvent) - Number(left.isEvent) ||
   left.startMinute - right.startMinute ||
   left.createdAt.localeCompare(right.createdAt) ||
   left.id.localeCompare(right.id);

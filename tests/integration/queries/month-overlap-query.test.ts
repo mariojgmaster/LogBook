@@ -58,4 +58,20 @@ describe('month overlap query', () => {
       query.execute({ start: '2026-01-01', end: '2027-01-02', mode: 'month' }),
     ).toThrowError(expect.objectContaining({ code: 'VALIDATION' }));
   });
+
+  it('lists informational events by their civil date', async () => {
+    const records = new IndexedDbLogRecordRepository();
+    const projectId = crypto.randomUUID();
+    const event = LogRecord.create({
+      id: crypto.randomUUID(),
+      projectId,
+      localDate: '2026-06-15',
+      isEvent: true,
+      details: 'Marco do projeto',
+      now: new Date(2026, 5, 1, 12),
+    });
+    await records.add(event);
+    const page = await new IndexedDbRecordQueryRepository().list('2026-06-01', '2026-06-30');
+    expect(page.items).toEqual([expect.objectContaining({ id: event.props.id, isEvent: true })]);
+  });
 });

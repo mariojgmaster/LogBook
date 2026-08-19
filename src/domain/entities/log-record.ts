@@ -10,6 +10,7 @@ export interface LogRecordProps {
   endLocalDate?: string;
   endMinute: number;
   durationMinutes: number;
+  isEvent?: boolean;
   withoutLunchBreak?: boolean;
   details: string;
   revision: number;
@@ -21,10 +22,11 @@ export interface CreateLogRecordInput {
   id: string;
   projectId: string;
   localDate: string;
-  startMinute: number;
+  startMinute?: number;
   endLocalDate?: string;
   endMinute?: number;
   durationMinutes?: number;
+  isEvent?: boolean;
   withoutLunchBreak?: boolean;
   details: string;
   now: Date;
@@ -41,6 +43,27 @@ export class LogRecord {
       throw new AppError('VALIDATION', {
         details: 'Os detalhes devem ter entre 1 e 2.000 caracteres.',
       });
+    }
+    if (input.isEvent) {
+      const timestamp = input.now.toISOString();
+      return new LogRecord({
+        id: input.id,
+        projectId: input.projectId,
+        localDate: date.value,
+        startMinute: 0,
+        endLocalDate: date.value,
+        endMinute: 0,
+        durationMinutes: 0,
+        isEvent: true,
+        withoutLunchBreak: true,
+        details,
+        revision: 1,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      });
+    }
+    if (input.startMinute === undefined) {
+      throw new AppError('VALIDATION', { startTime: 'Informe o início.' });
     }
     if ((input.endMinute === undefined) === (input.durationMinutes === undefined)) {
       throw new AppError('VALIDATION', { endTime: 'Informe o fim ou a duração, mas não ambos.' });
@@ -68,6 +91,21 @@ export class LogRecord {
   }
 
   static restore(props: LogRecordProps): LogRecord {
+    if (props.isEvent) {
+      if (
+        props.startMinute !== 0 ||
+        props.endMinute !== 0 ||
+        props.durationMinutes !== 0 ||
+        props.endLocalDate !== props.localDate ||
+        props.revision < 1 ||
+        !props.id ||
+        !props.projectId ||
+        !props.details.trim()
+      ) {
+        throw new AppError('STORAGE_UNAVAILABLE');
+      }
+      return new LogRecord({ ...props, isEvent: true, withoutLunchBreak: true });
+    }
     const startDate = LocalDate.parse(props.localDate);
     if (!props.endLocalDate) throw new AppError('STORAGE_UNAVAILABLE');
     const endDate = LocalDate.parse(props.endLocalDate);
@@ -103,6 +141,9 @@ export class LogRecord {
 }
 
 const resolveRange = (input: CreateLogRecordInput, startDate: LocalDate, lunchMinutes: number) => {
+  if (input.startMinute === undefined) {
+    throw new AppError('VALIDATION', { startTime: 'Informe o início.' });
+  }
   if (input.durationMinutes !== undefined) {
     const range = TimeRange.fromDuration(input.startMinute, input.durationMinutes + lunchMinutes);
     return {

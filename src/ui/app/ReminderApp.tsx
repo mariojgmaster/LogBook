@@ -67,9 +67,13 @@ export function ReminderApp() {
     <main className="reminder-shell">
       <header className="reminder-toolbar">
         <Flex align="center" gap="small">
-          <span className="reminder-logo" aria-hidden="true">
-            L
-          </span>
+          <img
+            className="reminder-logo"
+            src="/icons/logbook-64.png"
+            alt=""
+            width={26}
+            height={26}
+          />
           <Typography.Text strong>LogBook</Typography.Text>
         </Flex>
         <BellFilled className="reminder-bell" aria-hidden="true" />

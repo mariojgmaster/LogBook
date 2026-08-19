@@ -105,6 +105,27 @@ describe('month projection', () => {
     expect(projection.daySegments.map((segment) => segment.recordId)).toEqual(['weekday-4']);
   });
 
+  it('projects an event once without fabricating a time range', () => {
+    const projection = projectMonthRecords(
+      [
+        record({
+          id: 'event',
+          localDate: '2026-08-18',
+          endLocalDate: '2026-08-18',
+          startMinute: 0,
+          endMinute: 0,
+          durationMinutes: 0,
+          isEvent: true,
+        }),
+      ],
+      { start: '2026-08-01', end: '2026-08-31' },
+    );
+    expect(projection.daySegments).toEqual([
+      expect.objectContaining({ recordId: 'event', date: '2026-08-18', isEvent: true }),
+    ]);
+    expect(projection.rangeSegments).toHaveLength(1);
+  });
+
   it('assigns the least-used color deterministically and reuses a released slot', () => {
     const projects = [0, 0, 1].map((colorSlot, index) => ({
       id: `project-${index}`,

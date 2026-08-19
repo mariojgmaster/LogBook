@@ -29,15 +29,11 @@ body.snooze-body {
 }
 
 .reminder-logo {
-  display: inline-grid;
+  display: block;
+  flex: none;
   width: 26px;
   height: 26px;
-  color: #07110e;
-  font-size: 0.8rem;
-  font-weight: 800;
-  place-items: center;
-  background: #65d6ad;
-  border-radius: 7px;
+  object-fit: contain;
 }
 
 .reminder-bell {

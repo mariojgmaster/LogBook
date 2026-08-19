@@ -1,5 +1,10 @@
 import { useState } from 'react';
-import { ClockCircleOutlined, CopyOutlined, FolderOutlined } from '@ant-design/icons';
+import {
+  CalendarOutlined,
+  ClockCircleOutlined,
+  CopyOutlined,
+  FolderOutlined,
+} from '@ant-design/icons';
 import { Button, Card, Space, Tag, Typography } from 'antd';
 import type { LogRecordProps } from '@/domain/entities/log-record';
 import type { ProjectProps } from '@/domain/entities/project';
@@ -104,10 +109,19 @@ export function DailyView({
                     {record.details}
                   </Typography.Paragraph>
                 </div>
-                <Tag icon={<ClockCircleOutlined />}>
-                  {formatClockTime(record.startMinute)}–{formatClockTime(record.endMinute)}
-                </Tag>
-                <Typography.Text>{formatMinutes(record.durationMinutes)}</Typography.Text>
+                {record.isEvent ? (
+                  <>
+                    <Tag icon={<CalendarOutlined />}>Evento</Tag>
+                    <Typography.Text type="secondary">Informativo</Typography.Text>
+                  </>
+                ) : (
+                  <>
+                    <Tag icon={<ClockCircleOutlined />}>
+                      {formatClockTime(record.startMinute)}–{formatClockTime(record.endMinute)}
+                    </Tag>
+                    <Typography.Text>{formatMinutes(record.durationMinutes)}</Typography.Text>
+                  </>
+                )}
                 <div className="record-actions">
                   <Button
                     type="link"

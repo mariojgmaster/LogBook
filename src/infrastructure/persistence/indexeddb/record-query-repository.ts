@@ -27,8 +27,10 @@ export class IndexedDbRecordQueryRepository implements RecordQueryRepository {
       .map((value) => LogRecord.restore(value).props)
       .filter(
         (record) =>
-          civilMinute(record.endLocalDate!, record.endMinute) > periodStart &&
-          civilMinute(record.localDate, record.startMinute) < periodEnd &&
+          (record.isEvent
+            ? record.localDate >= startDate.value && record.localDate <= endDate.value
+            : civilMinute(record.endLocalDate!, record.endMinute) > periodStart &&
+              civilMinute(record.localDate, record.startMinute) < periodEnd) &&
           (projectIds.size === 0 || projectIds.has(record.projectId)) &&
           (!normalizedSearch || normalizeSearch(record.details).includes(normalizedSearch)),
       )
@@ -51,6 +53,7 @@ const civilMinute = (date: string, minute: number): number => {
 
 const compareRecords = (left: LogRecordProps, right: LogRecordProps) =>
   left.localDate.localeCompare(right.localDate) ||
+  Number(right.isEvent) - Number(left.isEvent) ||
   left.startMinute - right.startMinute ||
   left.createdAt.localeCompare(right.createdAt) ||
   left.id.localeCompare(right.id);

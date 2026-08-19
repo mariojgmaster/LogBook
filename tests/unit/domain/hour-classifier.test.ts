@@ -40,6 +40,24 @@ describe('hour classifier', () => {
       classifyHours([record('1', '2026-08-17', 480, 60)], { isHoliday: () => true }).overtime100,
     ).toBe(60);
   });
+  it('classifies weekday time outside 08:00–17:00 as overtime', () => {
+    const result = classifyHours(
+      [record('1', '2026-08-17', 60, 60), record('2', '2026-08-17', 480, 60)],
+      { isHoliday: () => false },
+    );
+    expect(result).toMatchObject({ regular: 60, overtime50: 60, total: 120 });
+  });
+  it('ignores informational events in all hour buckets', () => {
+    const event = { ...record('1', '2026-08-17', 0, 0), isEvent: true };
+    expect(classifyHours([event], { isHoliday: () => false })).toMatchObject({
+      regular: 0,
+      overtime50: 0,
+      overtime100: 0,
+      total: 0,
+      records: [],
+      byProject: {},
+    });
+  });
   it('does not add the lunch interval back into accountable totals', () => {
     const withLunch = {
       ...record('1', '2026-08-17', 660, 420),
